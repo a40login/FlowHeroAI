@@ -1,5 +1,4 @@
-import { ZodSchema } from 'zod';
-import { JsonSchema7ObjectType, zodToJsonSchema } from 'zod-to-json-schema';
+import { ZodSchema, toJSONSchema as zToJSONSchema, ZodType, ZodObject, ZodInterface } from 'zod';
 
 import type { AixTools_FunctionCallDefinition } from '../server/api/aix.wiretypes';
 import { DMessageContentFragment, DMessageToolInvocationPart, DMessageVoidFragment, isContentFragment } from '~/common/stores/chat/chat.fragments';
@@ -17,7 +16,7 @@ export type AixClientFunctionCallToolDefinition = {
    * We only accept objects, not arrays - as downstream APIs have spotty implementation for non-object.
    * If the function does not take any inputs, use `Zod.object({})` or Zod.void().
    */
-  inputSchema: ZodSchema<object /*| void*/>;
+  inputSchema: ZodObject | ZodInterface;
 }
 
 
@@ -26,8 +25,27 @@ export type AixClientFunctionCallToolDefinition = {
  * @param functionCall
  */
 export function aixFunctionCallTool(functionCall: AixClientFunctionCallToolDefinition): AixTools_FunctionCallDefinition {
-  const { properties, required } = zodToJsonSchema(functionCall.inputSchema, { $refStrategy: 'none' }) as JsonSchema7ObjectType;
-  const takesNoInputs = !Object.keys(properties || {}).length;
+  const jsonSchema = zToJSONSchema(functionCall.inputSchema, {
+    /**
+     * [2025-04-14] Defaulting to 'throw' for now, as we are in control of the schema. However this
+     * could be deleterious for some tools or 3rd party schemas that are not in our control. To
+     * be revised later.
+     */
+    cycles: 'throw',
+    /**
+     * Again, starting really strict. We'll see how this works out in practice.
+     */
+    unrepresentable:'throw',
+  });
+  if (jsonSchema.type !== 'object')
+    throw new Error('AIX: Function call input schema must be an object.');
+
+  const properties = jsonSchema.properties ?? {} as any; // FIXME: fix types (any is bad)
+  const required = jsonSchema.required as string[] | undefined;
+
+  const takesNoInputs = !Object.keys(properties).length;
+  // FIXME: remove this only once we validate that tool calls get converted correctly!
+  debugger;
   return {
     type: 'function_call',
     function_call: {
@@ -35,7 +53,7 @@ export function aixFunctionCallTool(functionCall: AixClientFunctionCallToolDefin
       description: functionCall.description,
       ...(!takesNoInputs && {
         input_schema: {
-          properties: _recursiveObjectSchemaCleanup(properties),
+          properties: properties, // _recursiveObjectSchemaCleanup(properties),
           ...(required && { required }),
         },
       }),
