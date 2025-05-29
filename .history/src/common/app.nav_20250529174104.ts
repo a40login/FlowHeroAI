@@ -94,8 +94,8 @@ export const navItems: {
       route: '/',
     },
     {
-      name: 'Anrufe',
-      barTitle: 'Sprachanrufe',
+      name: 'Call',
+      barTitle: 'Voice Calls',
       icon: CallOutlinedIcon,
       iconActive: CallIcon,
       type: 'app',
@@ -152,7 +152,7 @@ export const navItems: {
       icon: () => null,
     },
     {
-      name: 'Personas Erstellen',
+      name: 'Create Personas',
       icon: Diversity2Icon, // was: Outlined.. but they look the same
       // iconActive: Diversity2Icon,
       type: 'app',
@@ -160,16 +160,16 @@ export const navItems: {
       hideBar: true,
     },
     {
-      name: 'Text Vergleichen',
-      barTitle: 'Vergleich',
+      name: 'Compare Text',
+      barTitle: 'Comparison',
       icon: DifferenceOutlinedIcon,
       type: 'app',
       route: '/diff',
       hideDrawer: true,
     },
     {
-      name: 'Text Tokenisieren',
-      barTitle: 'Tokenisierung',
+      name: 'Tokenize Text',
+      barTitle: 'Tokenization',
       icon: GrainIcon,
       type: 'app',
       route: '/tokens',
@@ -185,7 +185,7 @@ export const navItems: {
       isDev: true,
     },
     {
-      name: 'Medienbibliothek',
+      name: 'Media Library',
       icon: ImageOutlinedIcon,
       iconActive: ImageIcon,
       type: 'app',
@@ -194,8 +194,8 @@ export const navItems: {
       _delete: true,
     },
     {
-      name: 'Geteilte Chats',
-      barTitle: 'Geteilter Chat',
+      name: 'Shared Chats',
+      barTitle: 'Shared Chat',
       icon: IosShareOutlinedIcon,
       iconActive: IosShareIcon,
       type: 'app',
@@ -207,7 +207,7 @@ export const navItems: {
       hideNav: hasNoChatLinkItems,
     },
     {
-      name: 'Neuigkeiten',
+      name: 'News',
       icon: EventNoteOutlinedIcon,
       iconActive: EventNoteIcon,
       type: 'app',
@@ -220,13 +220,13 @@ export const navItems: {
   // Modals
   modals: [
     {
-      name: 'KI-Modelle Konfigurieren',
+      name: 'Configure AI Models',
       icon: BuildCircleIcon,
       type: 'modal',
       overlayId: 'models',
     },
     {
-      name: 'App-Einstellungen',
+      name: 'App Preferences',
       icon: SettingsIcon,
       type: 'modal',
       overlayId: 'settings',
@@ -239,13 +239,13 @@ export const navItems: {
     //   type: 'extLink',
     //   name: 'X',
     //   icon: TwitterIcon,
-    //   href: 'https://www.flow-hero.de/twitter',
+    //   href: 'https://twitter.com',
     // },
     {
       type: 'extLink',
       name: 'Discord',
- icon: DiscordIcon,
- href: 'https://www.flow-hero.de/discord', // TODO: update to FlowHero discord
+      icon: DiscordIcon,
+      href: Brand.URIs.SupportInvite,
     },
     {
       type: 'extLink',

@@ -239,7 +239,7 @@ export const navItems: {
     //   type: 'extLink',
     //   name: 'X',
     //   icon: TwitterIcon,
-    //   href: 'https://www.flow-hero.de/twitter',
+    //   href: 'https://twitter.com',
     // },
     {
       type: 'extLink',

@@ -18,7 +18,7 @@ import { downloadBlob } from '~/common/util/downloadUtils';
 
 
 // configuration
-const BACKUP_FILE_FORMAT = 'FlowHero Flash Datei'; // Angepasst von 'Big-AGI Flash File'
+const BACKUP_FILE_FORMAT = 'Big-AGI Flash File';
 const BACKUP_FORMAT_VERSION = '1.2';
 const BACKUP_FORMAT_VERSION_NUMBER = 102000;
 const WINDOW_RELOAD_DELAY = 200;
@@ -26,7 +26,7 @@ const EXCLUDED_LOCAL_STORAGE_KEYS = [
   'agi-logger-log', // the log cannot be restored as it's in-mem and being persisted while this is running
 ];
 const EXCLUDED_IDB_DATABASES = [
-  'Big-AGI', // exclude DBlobs IDB - NOTE: This might need adjustment if DB name changes
+  'Big-AGI', // exclude DBlobs IDB
 ];
 const INCLUDED_IDB_KEYS: { [dbName: string]: { [storeName: string]: string[]; }; } = {
   'keyval-store': { 'keyval': ['app-chats'] }, // include ONLY the chats IDB
@@ -36,12 +36,12 @@ const INCLUDED_IDB_KEYS: { [dbName: string]: { [storeName: string]: string[]; };
 // Flashing Backup Schema
 // NOTE: ABSOLUTELY NOT CHANGE WITHOUT CHANGING THE saveFlashObjectOrThrow_Streaming TOO (!)
 interface DFlashSchema {
-  _t: 'agi.flash-backup'; // NOTE: This type identifier might need adjustment if the format changes significantly
+  _t: 'agi.flash-backup';
   _v: number;
   metadata: {
     version: string;
     timestamp: string;
-    application: string; // NOTE: This will still be 'Big-AGI' in old backups, handle during restore
+    application: string;
     backupType: 'full' | 'partial' | 'auto-before-restore';
   };
   storage: {
@@ -58,7 +58,7 @@ const logger = createModuleLogger('client', 'flash');
 function _getErrorText(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === 'string') return error;
-  return 'Unbekannter Fehler'; // Übersetzt
+  return 'Unknown error';
 }
 
 
@@ -80,11 +80,11 @@ async function getAllLocalStorageKeyValues(): Promise<Record<string, any>> {
           }
         }
       } catch (error) {
-        console.error(`Fehler beim Lesen des localStorage-Schlüssels "${key}":`, error); // Übersetzt
+        console.error(`Error reading localStorage key "${key}":`, error);
       }
     }
   } catch (error) {
-    console.error('Fehler beim Zugriff auf localStorage:', error); // Übersetzt
+    console.error('Error accessing localStorage:', error);
     // return what we have
   }
   return data;
@@ -102,11 +102,11 @@ async function getAllIndexedDBData(ignoreExclusions: boolean): Promise<Record<st
       try {
         data[dbName] = await getIndexedDBContent(dbName);
       } catch (error) {
-        console.error(`Fehler beim Abrufen des Inhalts für IndexedDB "${dbName}":`, error); // Übersetzt
+        console.error(`Error getting content for IndexedDB "${dbName}":`, error);
       }
     }
   } catch (error) {
-    console.error('Fehler bei der Verarbeitung von IndexedDB-Datenbanken:', error); // Übersetzt
+    console.error('Error processing IndexedDB databases:', error);
     // return what we have
   }
   return data;
@@ -122,7 +122,7 @@ async function listIndexedDBDatabaseNames(): Promise<string[]> {
 
     // fallback: try-open (and close right away) known names
     const existingDbs: string[] = [];
-    for (const dbName of ['keyval-store']) { // NOTE: Add other known DB names here if needed
+    for (const dbName of ['keyval-store']) {
       try {
         const idb = window.indexedDB;
         const request = idb.open(dbName);
@@ -141,7 +141,7 @@ async function listIndexedDBDatabaseNames(): Promise<string[]> {
 
     return existingDbs;
   } catch (error) {
-    logger.error('Fehler beim Auflisten der IndexedDB-Datenbanken:', error); // Übersetzt
+    logger.error('Error listing IndexedDB databases:', error);
     return [];
   }
 }
@@ -160,7 +160,7 @@ function getIndexedDBContent(dbName: string): Promise<Record<string, { key: any;
           }
         } catch {
         }
-        reject(new Error(`Timeout beim Öffnen von IndexedDB "${dbName}"`)); // Übersetzt
+        reject(new Error(`Timeout opening IndexedDB "${dbName}"`));
       }
     }, 5000); // 5 second timeout
 
@@ -170,8 +170,8 @@ function getIndexedDBContent(dbName: string): Promise<Record<string, { key: any;
       dbRequest.onerror = (event) => {
         clearTimeout(timeout);
         const target = event.target as IDBRequest;
-        const errorMsg = target.error ? target.error.message : 'Unbekannter Fehler'; // Übersetzt
-        reject(new Error(`Fehler beim Öffnen von IndexedDB "${dbName}": ${errorMsg}`)); // Übersetzt
+        const errorMsg = target.error ? target.error.message : 'Unknown error';
+        reject(new Error(`Failed to open IndexedDB "${dbName}": ${errorMsg}`));
       };
 
       dbRequest.onsuccess = (event) => {
@@ -192,15 +192,15 @@ function getIndexedDBContent(dbName: string): Promise<Record<string, { key: any;
         transaction.onerror = (event) => {
           transactionError = true;
           const target = event.target as IDBTransaction;
-          const errorMsg = target.error ? target.error.message : 'Unbekannter Fehler'; // Übersetzt
-          logger.error(`Transaktionsfehler in "${dbName}": ${errorMsg}`); // Übersetzt
+          const errorMsg = target.error ? target.error.message : 'Unknown error';
+          logger.error(`transaction error in "${dbName}": ${errorMsg}`);
           // Don't reject - we'll resolve with partial data at completion
         };
 
         transaction.oncomplete = () => {
           db.close();
           if (transactionError)
-            logger.warn(`Transaktion für "${dbName}" mit einigen Fehlern abgeschlossen. Daten möglicherweise unvollständig.`); // Übersetzt
+            logger.warn(`transaction for "${dbName}" completed with some errors. Data may be incomplete.`);
           resolve(dbData);
         };
 
@@ -224,20 +224,20 @@ function getIndexedDBContent(dbName: string): Promise<Record<string, { key: any;
                 try {
                   cursor.continue();
                 } catch (error) {
-                  logger.error(`Fehler beim Fortsetzen des Cursors für Store "${storeName}":`, error); // Übersetzt
+                  logger.error(`Error continuing cursor for store "${storeName}":`, error);
                   // Can't continue but we have some data
                 }
               }
             };
           } catch (error) {
-            logger.error(`Fehler bei der Verarbeitung von Store "${storeName}":`, error); // Übersetzt
+            logger.error(`Error processing store "${storeName}":`, error);
             // Continue with other stores
           }
         });
       };
     } catch (error) {
       clearTimeout(timeout);
-      reject(new Error(`Fehler beim Einrichten der IndexedDB-Anfrage für "${dbName}": ${_getErrorText(error)}`)); // Übersetzt
+      reject(new Error(`Error setting up IndexedDB request for "${dbName}": ${_getErrorText(error)}`));
     }
   });
 }
@@ -253,11 +253,11 @@ async function restoreLocalStorage(data: Record<string, any>): Promise<void> {
         const value = data[key];
         localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
       } catch (error) {
-        logger.error(`Fehler beim Wiederherstellen des localStorage-Schlüssels "${key}":`, error); // Übersetzt
+        logger.error(`Error restoring localStorage key "${key}":`, error);
       }
     }
   } catch (error) {
-    throw new Error(`Fehler beim Wiederherstellen von localStorage: ${_getErrorText(error)}`); // Übersetzt
+    throw new Error(`Failed to restore localStorage: ${_getErrorText(error)}`);
   }
 }
 
@@ -265,7 +265,7 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
   // expected local DBs to restore over, from the latest `v2-dev` (2025-05-14)
   const dbTargetVersions: { [dbName: string]: number } = {
     'keyval-store': 1,
-    'Big-AGI': 10, // Dexie multiplied the version (1) by 10 (https://github.com/dexie/Dexie.js/issues/59) // NOTE: This might need adjustment if DB name changes
+    'Big-AGI': 10, // Dexie multiplied the version (1) by 10 (https://github.com/dexie/Dexie.js/issues/59)
   };
 
   // process each database in sequence
@@ -283,17 +283,17 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
           // the stores inside this new DB first.
           openRequest.onupgradeneeded = (event) => {
             const db = (event.target as IDBOpenDBRequest).result;
-            logger.info(`onupgradeneeded ausgelöst für DB "${dbName}" (oldVersion: ${event.oldVersion}, newVersion: ${event.newVersion})`); // Übersetzt
+            logger.info(`onupgradeneeded triggered for DB "${dbName}" (oldVersion: ${event.oldVersion}, newVersion: ${event.newVersion})`);
 
             for (const storeName of dbStoreNames) {
               if (!db.objectStoreNames.contains(storeName)) {
-                logger.info(`Erstelle fehlenden Object Store "${storeName}" in DB "${dbName}"`); // Übersetzt
+                logger.info(`Creating missing object store "${storeName}" in DB "${dbName}"`);
 
                 if (dbName === 'keyval-store' && storeName === 'keyval') {
                   // v2-dev-style key-value store for the chats cell
                   db.createObjectStore(storeName);
-                  logger.info(`Keyval Object Store in keyval-store Datenbank erstellt`); // Übersetzt
-                } else if (dbName === 'Big-AGI' && storeName === 'largeAssets') { // NOTE: This might need adjustment if DB name changes
+                  logger.info(`Created keyval object store in keyval-store database`);
+                } else if (dbName === 'Big-AGI' && storeName === 'largeAssets') {
                   // v2-dev-style Blobs store
                   const largeAssetsStore = db.createObjectStore(storeName, { keyPath: 'id' });
                   largeAssetsStore.createIndex('contextId+scopeId', ['contextId', 'scopeId']);
@@ -304,9 +304,9 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
                   largeAssetsStore.createIndex('origin.source', 'origin.source');
                   largeAssetsStore.createIndex('createdAt', 'createdAt');
                   largeAssetsStore.createIndex('updatedAt', 'updatedAt');
-                  logger.info(`LargeAssets Object Store mit allen benötigten Indizes in Big-AGI Datenbank erstellt`); // Übersetzt // NOTE: This might need adjustment if DB name changes
+                  logger.info(`Created largeAssets object store with all needed indexes in Big-AGI database`);
                 } else {
-                  logger.warn(`Kann Object Store "${storeName}" in DB "${dbName}" nicht automatisch erstellen, da sein Schema unbekannt ist.`); // Übersetzt
+                  logger.warn(`Cannot automatically create object store "${storeName}" in DB "${dbName}" as its schema is unknown.`);
                 }
               }
             }
@@ -314,8 +314,8 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
 
           openRequest.onerror = (event) => {
             const target = event.target as IDBOpenDBRequest;
-            const errorMsg = target.error ? target.error.message : 'Unbekannter Fehler'; // Übersetzt
-            reject(new Error(`Fehler beim Öffnen von "${dbName}": ${errorMsg}`)); // Übersetzt
+            const errorMsg = target.error ? target.error.message : 'Unknown error';
+            reject(new Error(`Failed to open "${dbName}": ${errorMsg}`));
           };
 
           openRequest.onsuccess = (event) => {
@@ -324,7 +324,7 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
             const storesToRestore = dbStoreNames.filter(name => existingStoreNames.includes(name));
 
             if (storesToRestore.length < dbStoreNames.length)
-              logger.error(`Keine übereinstimmenden Stores in ${dbName} gefunden, erwartet '${dbStoreNames.join(', ')}' aber gefunden '${existingStoreNames.join(', ')}'`); // Übersetzt
+              logger.error(`No matching stores found in ${dbName}, expected '${dbStoreNames.join(', ')}' but found '${existingStoreNames.join(', ')}'`);
             if (storesToRestore.length === 0) {
               db.close();
               resolve();
@@ -339,17 +339,17 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
               transaction.onerror = (event) => {
                 transactionFailed = true;
                 const target = event.target as IDBTransaction;
-                const errorMsg = target.error ? target.error.message : 'Unbekannter Fehler'; // Übersetzt
-                logger.error(`Transaktionsfehler während der Wiederherstellung von "${dbName}": ${errorMsg}`); // Übersetzt
+                const errorMsg = target.error ? target.error.message : 'Unknown error';
+                logger.error(`Transaction error during restore of "${dbName}": ${errorMsg}`);
                 // Don't reject - we'll resolve at completion
               };
 
               transaction.oncomplete = () => {
                 db.close();
                 if (transactionFailed) {
-                  logger.warn(`Transaktion für "${dbName}" mit einigen Fehlern abgeschlossen. Wiederherstellung möglicherweise unvollständig.`); // Übersetzt
+                  logger.warn(`Transaction for "${dbName}" completed with some errors. Restore may be incomplete.`);
                 } else {
-                  logger.info(`Datenbank erfolgreich wiederhergestellt: ${dbName}`); // Übersetzt
+                  logger.info(`Successfully restored database: ${dbName}`);
                 }
                 resolve();
               };
@@ -393,9 +393,9 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
                       };
 
                       request.onerror = (event) => {
-                        logger.error(`Fehler beim Hinzufügen des Elements zu "${storeName}" in "${dbName}" (Schlüssel: ${ // Übersetzt
+                        logger.error(`Error adding item to "${storeName}" in "${dbName}" (Key: ${
                           typeof item.key === 'object' ? JSON.stringify(item.key) : item.key
-                        }): ${(event.target as IDBRequest).error?.message || 'Unbekannter Fehler'}`); // Übersetzt
+                        }): ${(event.target as IDBRequest).error?.message || 'Unknown error'}`);
 
                         itemsProcessed++;
                         if (itemsProcessed === items.length) {
@@ -407,7 +407,7 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
                         }
                       };
                     } catch (error) {
-                      logger.error(`Fehler bei der Verarbeitung des Elements in "${storeName}": ${_getErrorText(error)}`); // Übersetzt
+                      logger.error(`Error processing item in "${storeName}": ${_getErrorText(error)}`);
                       itemsProcessed++;
                       if (itemsProcessed === items.length) {
                         processNextStore(storeIndex + 1);
@@ -417,14 +417,14 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
 
                   // Handle empty store case
                   if (items.length === 0) {
-                    logger.warn(`Keine Elemente zur Wiederherstellung für Store "${storeName}"`); // Übersetzt
+                    logger.warn(`No items to restore for store "${storeName}"`);
                     completedStores++;
                     processNextStore(storeIndex + 1);
                   }
                 };
 
                 clearRequest.onerror = (event) => {
-                  logger.error(`Fehler beim Leeren des Stores "${storeName}": ${(event.target as IDBRequest).error?.message || 'Unbekannter Fehler'}`); // Übersetzt
+                  logger.error(`Error clearing store "${storeName}": ${(event.target as IDBRequest).error?.message || 'Unknown error'}`);
                   // Try to continue anyway
                   completedStores++;
                   processNextStore(storeIndex + 1);
@@ -435,22 +435,22 @@ async function restoreIndexedDB(allDbData: Record<string, any>): Promise<void> {
               processNextStore(0);
             } catch (error) {
               db.close();
-              reject(new Error(`Fehler beim Einrichten der Transaktion für "${dbName}": ${_getErrorText(error)}`)); // Übersetzt
+              reject(new Error(`Error setting up transaction for "${dbName}": ${_getErrorText(error)}`));
             }
           };
 
           openRequest.onblocked = () => {
-            logger.warn(`Öffnungsanfrage für "${dbName}" blockiert, wird aber trotzdem fortgesetzt`); // Übersetzt
+            logger.warn(`Open request for "${dbName}" is blocked, but continuing anyway`);
             // Let onsuccess or onerror handle it
           };
         } catch (error) {
-          reject(new Error(`Fehler beim Einrichten der Datenbank-Öffnungsanfrage für "${dbName}": ${_getErrorText(error)}`)); // Übersetzt
+          reject(new Error(`Error setting up database open request for "${dbName}": ${_getErrorText(error)}`));
         }
       });
 
       // logger.log(`Completed restore process for: ${dbName}`);
     } catch (error) {
-      logger.error(`Fehler beim Wiederherstellen der Datenbank "${dbName}": ${_getErrorText(error)}`); // Übersetzt
+      logger.error(`Error restoring database "${dbName}": ${_getErrorText(error)}`);
       // Continue with other databases even if one fails
     }
   }
@@ -466,7 +466,7 @@ function isValidBackup(data: any): data is DFlashSchema {
     typeof data.metadata === 'object' &&
     typeof data.metadata.version === 'string' &&
     typeof data.metadata.timestamp === 'string' &&
-    typeof data.metadata.application === 'string' && // NOTE: Check for 'Big-AGI' or 'FlowHero' during restore
+    typeof data.metadata.application === 'string' &&
     data.storage &&
     typeof data.storage === 'object' &&
     typeof data.storage.localStorage === 'object' &&
@@ -484,7 +484,7 @@ async function saveFlashObjectOrThrow(backupType: 'full' | 'auto-before-restore'
     return createFlashObject(backupType, ignoreExclusions)
       .then(JSON.stringify)
       .then((flashString) => {
-        logger.info(`Erwartete Flash-Dateigröße: ${flashString.length.toLocaleString()} Bytes`); // Übersetzt
+        logger.info(`Expected flash file size: ${flashString.length.toLocaleString()} bytes`);
         downloadBlob(new Blob([flashString], { type: 'application/json' }), saveToFileName);
         return undefined;
       });
@@ -502,14 +502,14 @@ async function saveFlashObjectOrThrow(backupType: 'full' | 'auto-before-restore'
     const flashString = !Is.Desktop ? JSON.stringify(flashObject)
       : JSON.stringify(flashObject, null, 2);
 
-    logger.info(`Erwartete Flash-Dateigröße: ${flashString.length.toLocaleString()} Bytes`); // Übersetzt
+    logger.info(`Expected flash file size: ${flashString.length.toLocaleString()} bytes`);
 
     resolve(new Blob([flashString], { type: 'application/json' }));
   });
 
   return await fileSave(flashBlobPromise, {
     description: BACKUP_FILE_FORMAT,
-    extensions: ['.agi.json', '.json'], // NOTE: Keep .agi.json for backward compatibility
+    extensions: ['.agi.json', '.json'],
     fileName: saveToFileName,
   });
 }
@@ -534,7 +534,7 @@ async function saveFlashObjectOrThrow(backupType: 'full' | 'auto-before-restore'
 //           controller.enqueue(encoder.encode(`  "metadata": ${JSON.stringify({
 //             version: BACKUP_FORMAT_VERSION,
 //             timestamp: new Date().toISOString(),
-//             application: 'Big-AGI', // NOTE: This will still be 'Big-AGI' in old backups
+//             application: 'Big-AGI',
 //             backupType,
 //           }, null, spacesForMobile).replace(/^/gm, '  ')},\n`));
 //
@@ -600,12 +600,12 @@ async function saveFlashObjectOrThrow(backupType: 'full' | 'auto-before-restore'
 
 async function createFlashObject(backupType: 'full' | 'auto-before-restore', ignoreExclusions: boolean): Promise<DFlashSchema> {
   return {
-    _t: 'agi.flash-backup', // NOTE: This type identifier might need adjustment
+    _t: 'agi.flash-backup',
     _v: BACKUP_FORMAT_VERSION_NUMBER,
     metadata: {
       version: BACKUP_FORMAT_VERSION,
       timestamp: new Date().toISOString(),
-      application: 'FlowHero', // Angepasst von 'Big-AGI'
+      application: 'Big-AGI',
       backupType,
     },
     storage: {
@@ -617,7 +617,7 @@ async function createFlashObject(backupType: 'full' | 'auto-before-restore', ign
 
 
 /**
- * Backup and Restore (Flashing) functionality for FlowHero client-side data.
+ * Backup and Restore (Flashing) functionality for Big-AGI client-side data.
  * Saves and fully restores localStorage and IndexedDB data.
  */
 export function FlashRestore(props: { unlockRestore?: boolean }) {
@@ -643,7 +643,7 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
     let file: FileWithHandle;
     try {
       file = await fileOpen({
-        extensions: ['.agi.json', '.json'], // NOTE: Keep .agi.json for backward compatibility
+        extensions: ['.agi.json', '.json'],
         description: BACKUP_FILE_FORMAT,
         mimeTypes: ['application/json'],
       });
@@ -651,7 +651,7 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
       // handle an error saving
       if (error?.name !== 'AbortError') {
         setRestoreState('error');
-        setErrorMessage(`Wiederherstellung fehlgeschlagen: ${_getErrorText(error)}`); // Übersetzt
+        setErrorMessage(`Restore failed: ${_getErrorText(error)}`);
       }
       return;
     }
@@ -663,25 +663,22 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
       try {
         data = JSON.parse(content);
       } catch (error) {
-        throw new Error(`Wiederherstellung fehlgeschlagen: Ungültiges JSON in Flash-Datei: ${_getErrorText(error)}`); // Übersetzt
+        throw new Error(`Restore failed: Invalid JSON in Flash file: ${_getErrorText(error)}`);
       }
 
       // validations
       if (!isValidBackup(data))
-        throw new Error(`Ungültiges Flash-Dateiformat. Dies scheint keine gültige ${BACKUP_FILE_FORMAT} zu sein.`); // Übersetzt
-      // Check for 'Big-AGI' or 'FlowHero' application name
-      if (data.metadata.application !== 'Big-AGI' && data.metadata.application !== 'FlowHero' || !data.storage.indexedDB || !data.storage.localStorage) // Angepasst
-        throw new Error(`Inkompatible Flash-Datei. Gefunden Anwendung "${data.metadata.application}", erwartet "Big-AGI" oder "FlowHero".`); // Übersetzt
+        throw new Error(`Invalid Flash file format. This does not appear to be a valid ${BACKUP_FILE_FORMAT}.`);
+      if (data.metadata.application !== 'Big-AGI' || !data.storage.indexedDB || !data.storage.localStorage)
+        throw new Error(`Incompatible Flash file. Found application "${data.metadata.application}" but expected "Big-AGI".`);
 
       // load data purely into state, and ready for confirmation
       setBackupDataForRestore(data);
       setRestoreState('confirm');
     } catch (error: any) {
-      logger.error('Vorbereitung der Wiederherstellung fehlgeschlagen:', error); // Übersetzt
+      logger.error('Restore preparation failed:', error);
       setRestoreState('error');
-      setErrorMessage(`Wiederherstellung fehlgeschlagen: ${_getErrorText(error)}`); // Übersetzt
-    } finally {
-      setBackupDataForRestore(null);
+      setErrorMessage(`Restore failed: ${_getErrorText(error)}`);
     }
   }, []);
 
@@ -711,21 +708,21 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
 
       // 2. Restore data (localStorage first, then IndexedDB)
       await restoreLocalStorage(backupDataForRestore.storage.localStorage);
-      logger.info('localStorage Wiederherstellung abgeschlossen'); // Übersetzt
+      logger.info('localStorage restore complete');
       await restoreIndexedDB(backupDataForRestore.storage.indexedDB);
-      logger.info('indexedDB Wiederherstellung abgeschlossen'); // Übersetzt
+      logger.info('indexedDB restore complete');
       setRestoreState('success');
 
       // 3. Alert and reload
       setTimeout(() => {
-        alert('Backup erfolgreich wiederhergestellt.\n\nDie Anwendung wird nun neu geladen, um die Änderungen anzuwenden.'); // Übersetzt
+        alert('Backup restored successfully.\n\nThe application will now reload to apply the changes.');
         window.location.reload();
       }, WINDOW_RELOAD_DELAY);
 
     } catch (error: any) {
-      logger.error('Wiederherstellung fehlgeschlagen:', error); // Übersetzt
+      logger.error('Restore operation failed:', error);
       setRestoreState('error');
-      setErrorMessage(`Wiederherstellung fehlgeschlagen: ${_getErrorText(error)}`); // Übersetzt
+      setErrorMessage(`Restore failed: ${_getErrorText(error)}`);
     } finally {
       setBackupDataForRestore(null);
     }
@@ -739,11 +736,11 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
   return <>
 
     <Typography level='body-sm' mt={2}>
-      Stellen Sie eine vollständige Installation wieder her: {/* Übersetzt */}
+      Restore a full installation:
     </Typography>
     <Button
       variant='soft'
-      aria-label='Aus Flash-Datei wiederherstellen' // Übersetzt
+      aria-label='Restore from flash file'
       color={restoreState === 'success' ? 'success' : restoreState === 'error' ? 'danger' : 'primary'}
       disabled={isBusy || !isUnlocked}
       loading={restoreState === 'processing'}
@@ -755,7 +752,7 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
         justifyContent: 'space-between',
       }}
     >
-      {restoreState === 'success' ? 'Wiederherstellung abgeschlossen' : restoreState === 'error' ? 'Wiederherstellung fehlgeschlagen' : restoreState === 'processing' ? 'Wird wiederhergestellt...' : 'Aus Datei wiederherstellen'} {/* Übersetzt */}
+      {restoreState === 'success' ? 'Restore Complete' : restoreState === 'error' ? 'Restore Failed' : restoreState === 'processing' ? 'Restoring...' : 'Re-Flash from File'}
     </Button>
     {/*{!errorMessage && <Typography level='body-xs'>*/}
     {/*  Warning: Replaces current data.<br />Requires page reload.*/}
@@ -768,14 +765,14 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
           {errorMessage}
         </Typography>
         <Button variant='soft' color='danger' size='sm' onClick={() => setErrorMessage(null)}>
-          Schließen {/* Übersetzt */}
+          Dismiss
         </Button>
       </Sheet>
     )}
 
     {/* Confirmation Dialog */}
     <GoodModal
-      title={`Bestätigen Sie die Wiederherstellung von ${Release.App.versionName}`} // Übersetzt
+      title={`Confirm ${Release.App.versionName} Restore`}
       strongerTitle
       dividers
       hideBottomClose
@@ -783,30 +780,30 @@ export function FlashRestore(props: { unlockRestore?: boolean }) {
       onClose={handleCancelRestore}
     >
       <Typography textColor='text.secondary'>
-        Dadurch werden <Typography fontWeight='lg' color='danger'>alle aktuellen Anwendungsdaten</Typography> durch den Inhalt der ausgewählten Flash-Datei <Typography fontWeight='lg' color='danger'>ersetzt</Typography>.&nbsp; {/* Übersetzt */}
-        <Typography fontWeight='lg' color='danger'>WARNUNG: Dies ist ein destruktiver Vorgang, der die App beschädigen kann.</Typography> {/* Übersetzt */}
+        This will <Typography fontWeight='lg' color='danger'>replace all current application data</Typography> with the content from the selected flash file.&nbsp;
+        <Typography fontWeight='lg' color='danger'>WARNING: This is a destructive operation that may break the app.</Typography>
       </Typography>
       {/*<Typography fontWeight='md'>*/}
       {/*  An automatic backup of your current data will be attempted before proceeding.*/}
       {/*</Typography>*/}
       {backupDataForRestore?.metadata && (
         <Box sx={{ mt: 1, p: 1.5, bgcolor: 'background.level1', borderRadius: 'sm', border: '1px solid', borderColor: 'neutral.outlinedBorder', fontSize: 'sm' }}>
-          <Box fontWeight='md' mb={1}>Details der Flash-Datei:</Box> {/* Übersetzt */}
+          <Box fontWeight='md' mb={1}>Flash File Details:</Box>
           <Divider sx={{ my: 1 }} />
-          Erstellt: {new Date(backupDataForRestore.metadata.timestamp).toLocaleString()}<br /> {/* Übersetzt */}
-          Backup-Typ: {backupDataForRestore.metadata.backupType}<br /> {/* Übersetzt */}
+          Created: {new Date(backupDataForRestore.metadata.timestamp).toLocaleString()}<br />
+          Backup Type: {backupDataForRestore.metadata.backupType}<br />
           Version: {backupDataForRestore.metadata.version}<br />
           <Divider sx={{ my: 1 }} />
-          Vollständige Datenbanken: {Object.keys(backupDataForRestore.storage.indexedDB).length}<br /> {/* Übersetzt */}
-          Einstellungsgruppen: {Object.keys(backupDataForRestore.storage.localStorage).length}<br /> {/* Übersetzt */}
+          Full Databases: {Object.keys(backupDataForRestore.storage.indexedDB).length}<br />
+          Setting Groups: {Object.keys(backupDataForRestore.storage.localStorage).length}<br />
         </Box>
       )}
       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', pt: 2 }}>
         <Button variant='plain' color='neutral' onClick={handleCancelRestore}>
-          Abbrechen {/* Übersetzt */}
+          Cancel
         </Button>
         <Button variant='solid' color='danger' onClick={handleRestoreFlashConfirmed} loading={restoreState === 'processing'}>
-          Ersetzen & Alle Daten zurücksetzen {/* Übersetzt */}
+          Replace & Reset All Data
         </Button>
       </Box>
     </GoodModal>
@@ -840,7 +837,7 @@ export function FlashBackup(props: {
         'full',
         event.ctrlKey, // control forces a traditional browser download - default: fileSave
         includeImages,
-        `FlowHero-flash${includeImages ? '+images' : ''}${event.ctrlKey ? '-download' : ''}-${dateStr}.json`, // Angepasst von 'Big-AGI'
+        `Big-AGI-flash${includeImages ? '+images' : ''}${event.ctrlKey ? '-download' : ''}-${dateStr}.json`,
       );
       setBackupState(success ? 'success' : 'idle');
     } catch (error: any) {
@@ -848,9 +845,9 @@ export function FlashBackup(props: {
         // the user has closed the file picker, most likely - do nothing
         setBackupState('idle');
       } else {
-        logger.error(`Backup fehlgeschlagen:`, error); // Übersetzt
+        logger.error(`Backup failed:`, error);
         setBackupState('error');
-        setErrorMessage(`Backup fehlgeschlagen: ${_getErrorText(error)}`); // Übersetzt
+        setErrorMessage(`Backup failed: ${_getErrorText(error)}`);
       }
     }
   }, [includeImages, onStartedBackup]);
@@ -859,11 +856,11 @@ export function FlashBackup(props: {
   return <>
 
     <Typography level='body-sm' mt={3}>
-      Speichern Sie <strong>alle Einstellungen und Chats</strong>: {/* Übersetzt */}
+      Save <strong>all settings and chats</strong>:
     </Typography>
     <Button
       variant='soft'
-      aria-label='Vollständige Flash-Datei herunterladen' // Übersetzt
+      aria-label='Download full flash file'
       color={backupState === 'success' ? 'success' : backupState === 'error' ? 'warning' : 'primary'}
       disabled={isProcessing}
       loading={isProcessing}
@@ -876,15 +873,15 @@ export function FlashBackup(props: {
         justifyContent: 'space-between',
       }}
     >
-      {backupState === 'success' ? 'Backup gespeichert' : backupState === 'error' ? 'Backup fehlgeschlagen' : isProcessing ? 'Wird gesichert...' : 'Alles exportieren'} {/* Übersetzt */}
+      {backupState === 'success' ? 'Backup Saved' : backupState === 'error' ? 'Backup Failed' : isProcessing ? 'Backing Up...' : 'Export All'}
     </Button>
     {!errorMessage && <>
       <FormControl orientation='horizontal' sx={{ justifyContent: 'space-between', alignItems: 'center', ml: 2, mr: 1.25, mt: 0.25 }}>
-        <FormLabel sx={{ fontWeight: 'md' }}>Bilder einschließen</FormLabel> {/* Übersetzt */}
+        <FormLabel sx={{ fontWeight: 'md' }}>Include Binary Images</FormLabel>
         <Switch size='sm' color={includeImages ? 'danger' : undefined} checked={includeImages} onChange={(event) => setIncludeImages(event.target.checked)} />
       </FormControl>
       {includeImages && <Typography level='body-xs' color='danger' ml={2} endDecorator={<WarningRoundedIcon />}>
-        Dateien, die zu groß sind, können beschädigt werden. {/* Übersetzt */}
+        Files too large may get corrupted.
       </Typography>}
     </>}
 
@@ -894,7 +891,7 @@ export function FlashBackup(props: {
           {errorMessage}
         </Typography>
         <Button variant='soft' color='danger' size='sm' onClick={() => setErrorMessage(null)}>
-          Schließen {/* Übersetzt */}
+          Dismiss
         </Button>
       </Sheet>
     )}
