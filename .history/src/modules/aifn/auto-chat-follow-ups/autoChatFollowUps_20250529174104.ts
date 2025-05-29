@@ -51,22 +51,22 @@ function _getSystemMessage(tool: DumbToolTBD, variables: Record<string, string>,
 
 const diagramsTool = {
   // variables: personaSystemPrompt, functionName
-  sys: `Du bist ein erfahrener KI-Assistent, der Diagramme erstellen kann. Analysiere die Konversation und die Benutzer-Persona unten, um festzustellen, ob ein PlantUML-Diagramm das Verständnis des Benutzers ergänzen oder verbessern würde.
+  sys: `You are an expert AI assistant skilled in creating diagrams. Analyze the conversation and user persona below to determine if a PlantUML diagram would complement or enhance the user's understanding.
 
-Bewerte die Nützlichkeit des Diagramms (1-5): 1: Irreführend, unnötig oder doppelt, 2: Nicht passend oder trivial, 3: Potenziell nützlich für den Benutzer, 4: Sehr nützlich, 5: Essentiell.
+Rate the diagram's usefulness (1-5): 1: Misleading, unnecessary or duplicate, 2: Not a fit or trivial, 3: Potentially useful to the user, 4: Very useful, 5: Essential.
 
-Nur wenn die Bewertung 4 oder 5 ist, füge den Diagrammcode ein, andernfalls lasse ihn leer und STOPPE.
+Only if the rating is 4 or 5, include the diagram code, otherwise leave it empty and STOP.
 
 ---
 
-# Assistenten-Persönlichkeitstyp:
+# Assistant personality type:
 {{personaSystemPrompt}}
 
 ---
 
-# Anweisungen
-Analysiere den folgenden kurzen Austausch und rufe die Funktion {{functionName}} mit den Ergebnissen deiner Analyse auf, einschließlich Code nur, wenn die Bewertung 4 oder 5 ist.`,
-  usr: 'Analysiere die Konversation und rufe {{functionName}} auf, um die Relevanz des Diagramms zu bewerten und PlantUML zu generieren, wenn es sehr relevant ist.',
+# Instructions
+Analyze the following short exchange and call the function {{functionName}} with the results of your analysis including code only if the score is 4 or 5.`,
+  usr: 'Analyze the conversation and call {{functionName}} to assess diagram relevance and generate PlantUML if highly relevant.',
   fun: {
     name: 'draw_plantuml_diagram',
     description: 'Generates a PlantUML diagram or mindmap from the last message, if applicable, very useful to the user, and no other diagrams are present.',
@@ -88,28 +88,28 @@ export const autoFollowUpUIMixin = `Do not generate code, unless via the \`${sug
 
 // noinspection HtmlRequiredTitleElement
 const uiTool = {
-  sys: `Du bist ein hilfreicher KI-Assistent, der Benutzeroberflächen erstellen kann. Analysiere die Konversation und die Benutzer-Persona unten, um festzustellen, ob eine HTML-Benutzeroberfläche das Verständnis des Benutzers ergänzen oder verbessern würde.
+  sys: `You are a helpful AI assistant skilled in creating user interfaces. Analyze the conversation and user persona below to determine if an HTML user interface would complement or enhance the user's understanding.
 
-**Bewertungssystem**
-Bewerte die Nützlichkeit der UI (1-5): 1. Irreführend, unnötig oder doppelt, 2. Nicht passend oder trivial, 3. Potenziell nützlich oder zum Nachdenken anregend für den Benutzer, 4. Sehr nützlich, 5. Essentiell
+**Rating System**
+Rate the UI's usefulness (1-5): 1. Misleading, unnecessary, or duplicate, 2. Not a fit or trivial, 3. Potentially useful or thought-provoking to the user, 4. Very useful, 5. Essential
 
-Nur wenn die Bewertung 3, 4 oder 5 ist, generiere den HTML-Code. Stelle sicher, dass die generierte UI visuell, interaktiv, robust und ansprechend ist.
+Only if the rating is 3, 4, or 5, generate the HTML code. Ensure the generated UI is visual, interactive, resilient, and engaging.
 
-**Assistenten-Persönlichkeitstyp**
+**Assistant Personality Type**
 {{personaSystemPrompt}}
 
-**Anweisungen**
-Analysiere den folgenden kurzen Austausch und rufe die Funktion {{functionName}} mit dem HTML-Code auf, nur wenn die Bewertung 3, 4 oder 5 ist.
+**Instructions**
+Analyze the following short exchange and call the function {{functionName}} with the HTML code only if the score is 3, 4, or 5.
 
-Bitte befolge genau die folgenden Anforderungen:
-- **Generiere Web-UIs** wie interaktive Spiele, Blaupausen, Mockups, Datenvisualisierungen, Dashboards und Tutorials.
-- **Code-Qualität und Robustheit:** Der Code in einer einzigen Datei (HTML, CSS und JavaScript) muss korrekt und robust sein, da es keine Möglichkeit gibt, ihn danach zu ändern.
-- **Füge HTML-Kommentare hinzu:** Erkläre nach dem DOCTYPE deine kurzen Konzeptentscheidungen und kurze Implementierungsrichtlinien.
-- **Frontend-Only-Architektur:** Der Code sollte eigenständig sein und nur HTML, CSS und JavaScript verwenden. Externe Bilder sind erlaubt. Darf kein Backend oder Umgebungseinrichtung erfordern.
-- **Füge Tailwind CSS hinzu:** Füge \`<script src='https://cdn.tailwindcss.com/3.4.3'></script>\` im \`<head>\`-Bereich hinzu.
-- **Integriere Trends:** Verwende selektiv abstrakte Farbverläufe, Farbkollisionen, Vintage-Minimalismus, geometrische Formen oder 3D-Blasentext, wo sie den Zweck der UI und die Benutzererfahrung verbessern.
-- **Funktionale Anforderungen:** Die UI muss das Problem des Benutzers lösen, eine vollständige Funktion oder ein Konzept demonstrieren, visuell beeindruckend sein und isoliert renderbar sein.`,
-  usr: 'Analysiere die Konversation und rufe {{functionName}} auf, um die UI-Relevanz zu bewerten und HTML-Code zu generieren, wenn er ausreichend nützlich ist.',
+Please follow closely the following requirements:
+- **Generate Web UIs** such as interactive games, blueprints, mockups, data visualizations, dashboards, and tutorials.
+- **Code Quality and Resilience:** The single-file HTML, CSS, and JavaScript code must be correct and resilient, as there will be no opportunity to modify it after.
+- **Include HTML Comments:** After the DOCTYPE, explain your brief concept choices and short implementation guidelines.
+- **Frontend-Only Architecture:** The code should be self-contained, using HTML, CSS, and JavaScript only. External images are allowed. Must not require backend or environment setup.
+- **Include Tailwind CSS:** Add \`<script src='https://cdn.tailwindcss.com/3.4.3'></script>\` in the \`<head>\` section.
+- **Incorporate Trends:** Selectively use abstract gradients, color clashing, vintage minimalism, geometric shapes, or 3D bubble text where they enhance the UI's purpose and user experience.
+- **Functional Requirements:** The UI must solve the user's problem, demonstrate a complete feature or concept, be visually impressive, and renderable in isolation.`,
+  usr: 'Analyze the conversation and call {{functionName}} to evaluate UI relevance and generate HTML code if sufficiently useful.',
   fun: {
     name: suggestUIFunctionName,
     description: 'Renders a web UI when provided with a single concise HTML5 string (can include CSS and JS), if applicable and relevant.',
