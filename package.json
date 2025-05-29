@@ -51,6 +51,7 @@
     "mammoth": "^1.9.0",
     "nanoid": "^5.1.5",
     "next": "~15.1.8",
+    "node.js": "^0.0.1-security",
     "nprogress": "^0.2.0",
     "pdfjs-dist": "4.10.38",
     "posthog-js": "^1.246.0",

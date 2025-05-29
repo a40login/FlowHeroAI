@@ -26,8 +26,7 @@ import { hasGoogleAnalytics, OptionalGoogleAnalytics } from '~/common/components
 import { hasPostHogAnalytics, OptionalPostHogAnalytics } from '~/common/components/3rdparty/PostHogAnalytics';
 
 
-// const Big_AGI_App = ({ Component, emotionCache, pageProps }: MyAppProps) => { // Original line
-const Flow_Hero_App = ({ Component, emotionCache, pageProps }: MyAppProps) => {
+const Big_AGI_App = ({ Component, emotionCache, pageProps }: MyAppProps) => {
 
   // We are using a nextjs per-page layout pattern to bring the (Optima) layout creation to a shared place
   // This reduces the flicker and the time switching between apps, and seems to not have impact on
@@ -65,5 +64,4 @@ const Flow_Hero_App = ({ Component, emotionCache, pageProps }: MyAppProps) => {
 };
 
 // Initializes React Query and tRPC, and enables the tRPC React Query hooks (apiQuery).
-// export default apiQuery.withTRPC(Big_AGI_App); // Original line
-export default apiQuery.withTRPC(Flow_Hero_App);
+export default apiQuery.withTRPC(Big_AGI_App);

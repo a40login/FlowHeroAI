@@ -22,8 +22,8 @@ import { ProviderBootstrapLogic } from '~/common/providers/ProviderBootstrapLogi
 import { ProviderSingleTab } from '~/common/providers/ProviderSingleTab';
 import { ProviderTheming } from '~/common/providers/ProviderTheming';
 import { SnackbarInsert } from '~/common/components/snackbar/SnackbarInsert';
-import { hasGoogleAnalytics, OptionalGoogleAnalytics } from '~/common/components/3rdparty/GoogleAnalytics';
-import { hasPostHogAnalytics, OptionalPostHogAnalytics } from '~/common/components/3rdparty/PostHogAnalytics';
+// import { hasGoogleAnalytics, OptionalGoogleAnalytics } from '~/common/components/3rdparty/GoogleAnalytics';
+// import { hasPostHogAnalytics, OptionalPostHogAnalytics } from '~/common/components/3rdparty/PostHogAnalytics';
 
 
 // const Big_AGI_App = ({ Component, emotionCache, pageProps }: MyAppProps) => { // Original line
