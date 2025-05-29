@@ -1,88 +1,88 @@
-# Deploying `big-AGI` with Docker
+# `FlowHero` mit Docker bereitstellen
 
-Utilize Docker containers to deploy the big-AGI application for an efficient and automated deployment process.
-Docker ensures faster development cycles, easier collaboration, and seamless environment management.
+Nutzen Sie Docker-Container, um die FlowHero-Anwendung für einen effizienten und automatisierten Bereitstellungsprozess bereitzustellen.
+Docker gewährleistet schnellere Entwicklungszyklen, einfachere Zusammenarbeit und nahtloses Umgebungsmanagement.
 
-## Build and run your container 🔧
+## Eigenen Container erstellen und ausführen 🔧
 
-1. **Clone big-AGI**
+1. **FlowHero klonen**
    ```bash
-   git clone https://github.com/enricoros/big-agi.git
-   cd big-agi
+   git clone https://github.com/enricoros/big-agi.git # Annahme: FlowHero ist ein Fork/basiert auf big-agi
+   cd big-agi # Pfad ggf. anpassen
    ```
-2. **Build the Docker Image**: Build a local docker image from the provided Dockerfile:
+2. **Das Docker-Image erstellen**: Erstellen Sie ein lokales Docker-Image aus dem bereitgestellten Dockerfile:
    ```bash
    docker build -t big-agi .
    ```
-3. **Run the Docker Container**: start a Docker container from the newly built image,
-   and expose its http port 3000 to your `localhost:3000` using:
+3. **Den Docker-Container ausführen**: Starten Sie einen Docker-Container aus dem neu erstellten Image
+   und machen Sie dessen HTTP-Port 3000 auf Ihrem `localhost:3000` verfügbar mit:
    ```bash
    docker run -d -p 3000:3000 big-agi
    ```
-4. Browse to [http://localhost:3000](http://localhost:3000)
+4. Rufen Sie [http://localhost:3000](http://localhost:3000) im Browser auf.
 
 <br/>
 
-## Run Official Containers 📦
+## Offizielle Container ausführen 📦
 
-`big-AGI` is pre-built from source code and published as a Docker image on the GitHub Container Registry (ghcr).
-The build process is transparent, and happens via GitHub Actions, as described in the
-file.
+`FlowHero` (basierend auf big-AGI) wird aus dem Quellcode vorgefertigt und als Docker-Image im GitHub Container Registry (ghcr) veröffentlicht.
+Der Build-Prozess ist transparent und erfolgt über GitHub Actions, wie in der
+Datei beschrieben.
 
-### Official Images: [ghcr.io/enricoros/big-agi](https://github.com/enricoros/big-agi/pkgs/container/big-agi)
+### Offizielle Images: [ghcr.io/enricoros/big-agi](https://github.com/enricoros/big-agi/pkgs/container/big-agi)
 
-#### Run using *docker* 🚀
+#### Ausführen mit *docker* 🚀
 
 ```bash
 docker run -d -p 3000:3000 ghcr.io/enricoros/big-agi:latest
 ```
 
-#### Run using *docker-compose* 🚀
+#### Ausführen mit *docker-compose* 🚀
 
-If you have Docker Compose installed, you can run the Docker container with `docker-compose up`
-to pull the Docker image (if it hasn't been pulled already) and start a Docker container. If you want to
-update the image to the latest version, you can run `docker-compose pull` before starting the service.
+Wenn Sie Docker Compose installiert haben, können Sie den Docker-Container mit `docker-compose up` ausführen,
+um das Docker-Image zu ziehen (falls es noch nicht gezogen wurde) und einen Docker-Container zu starten. Wenn Sie
+das Image auf die neueste Version aktualisieren möchten, können Sie `docker-compose pull` ausführen, bevor Sie den Dienst starten.
 
 ```bash
 docker-compose up -d
 ```
 
-### Make Local Services Visible to Docker 🌐
+### Lokale Dienste für Docker sichtbar machen 🌐
 
-To make local services running on your host machine accessible to a Docker container, such as a
-[Browseless](./config-feature-browse.md) service or a local API, you can follow this simplified guide:
+Um lokale Dienste, die auf Ihrer Host-Maschine laufen, für einen Docker-Container zugänglich zu machen, wie z.B. einen
+[Browseless](./config-feature-browse.md)-Dienst oder eine lokale API, können Sie dieser vereinfachten Anleitung folgen:
 
-| Operating System  | Steps to Make Local Services Visible to Docker                                                                                                                                                                                                                                                                                                                                               |
+| Betriebssystem  | Schritte, um lokale Dienste für Docker sichtbar zu machen                                                                                                                                                                                                                                                                                                                                               |
 |:------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Windows and macOS | Use the special DNS name `host.docker.internal` to refer to the host machine from within the Docker container. No additional network configuration is required. Access local services using `host.docker.internal:<PORT>`.                                                                                                                                                                   |
-| Linux             | Two options: *A*. Use <ins>--network="host"</ins> (`docker run --network="host" -d big-agi`) when running the Docker container to merge the container within the host network stack; however, this reduces container isolation. Alternatively: *B*. Connect to local services <ins>using the host's IP address</ins> directly, as host.docker.internal is not available by default on Linux. |
+| Windows und macOS | Verwenden Sie den speziellen DNS-Namen `host.docker.internal`, um von innerhalb des Docker-Containers auf die Host-Maschine zu verweisen. Es ist keine zusätzliche Netzwerkkonfiguration erforderlich. Greifen Sie auf lokale Dienste über `host.docker.internal:<PORT>` zu.                                                                                                                                                                   |
+| Linux             | Zwei Optionen: *A*. Verwenden Sie <ins>--network="host"</ins> (`docker run --network="host" -d big-agi`) beim Ausführen des Docker-Containers, um den Container in den Netzwerkstack des Hosts zu integrieren; dies reduziert jedoch die Container-Isolation. Alternativ: *B*. Verbinden Sie sich <ins>direkt über die IP-Adresse des Hosts</ins> mit lokalen Diensten, da host.docker.internal unter Linux standardmäßig nicht verfügbar ist. |
 
 <br/>
 
-### Reverse Proxy Configuration
+### Reverse-Proxy-Konfiguration
 
-A reverse proxy is a server that sits in front of big-AGI's container and can forwards web
-requests to it. Often used to run multiple web applications, expose them to the internet,
-increase security.
+Ein Reverse-Proxy ist ein Server, der vor dem FlowHero-Container sitzt und Web-
+Anfragen an diesen weiterleiten kann. Er wird oft verwendet, um mehrere Webanwendungen zu betreiben, sie im Internet verfügbar zu machen und
+die Sicherheit zu erhöhen.
 
-If you're deploying big-AGI behind a reverse proxy, you may want to see
-our [Reverse Proxy Deployment Guide](deploy-reverse-proxy.md) for more information.
-
-<br/>
-
-### More Information
-
-The [`Dockerfile`](../Dockerfile) describes how to create a Docker image. It establishes a Node.js environment,
-installs dependencies, and creates a production-ready version of the application as a local container.
-
-The [`docker-compose.yaml`](../docker-compose.yaml) file is configured to run the
-official image (big-agi:latest). This file is used to define the `big-agi` service, to expose
-port 3000 on the host, and launch big-AGI within the container (startup command).
-
-The [`.github/workflows/docker-image.yml`](../.github/workflows/docker-image.yml) file is used
-to build the Official Docker images and publish them to the GitHub Container Registry (ghcr).
-The build process is transparent and happens via GitHub Actions.
+Wenn Sie FlowHero hinter einem Reverse-Proxy bereitstellen, möchten Sie vielleicht
+unsere [Reverse-Proxy-Bereitstellungsanleitung](deploy-reverse-proxy.md) für weitere Informationen einsehen.
 
 <br/>
 
-Leverage Docker's capabilities for a reliable and efficient big-AGI deployment!
+### Weitere Informationen
+
+Das [`Dockerfile`](../Dockerfile) beschreibt, wie ein Docker-Image erstellt wird. Es etabliert eine Node.js-Umgebung,
+installiert Abhängigkeiten und erstellt eine produktionsreife Version der Anwendung als lokalen Container.
+
+Die Datei [`docker-compose.yaml`](../docker-compose.yaml) ist so konfiguriert, dass sie das
+offizielle Image (big-agi:latest) ausführt. Diese Datei wird verwendet, um den `big-agi`-Dienst zu definieren,
+Port 3000 auf dem Host freizugeben und FlowHero (basierend auf big-AGI) innerhalb des Containers zu starten (Startbefehl).
+
+Die Datei [`.github/workflows/docker-image.yml`](../.github/workflows/docker-image.yml) wird verwendet,
+um die offiziellen Docker-Images zu erstellen und sie im GitHub Container Registry (ghcr) zu veröffentlichen.
+Der Build-Prozess ist transparent und erfolgt über GitHub Actions.
+
+<br/>
+
+Nutzen Sie die Möglichkeiten von Docker für eine zuverlässige und effiziente FlowHero-Bereitstellung!

@@ -1,31 +1,31 @@
-**Connecting Your Database for Enhanced Features:**
+**Verbinden Sie Ihre Datenbank für erweiterte Funktionen:**
 
-This guide outlines the database options and setup steps for enabling features like Chat Link Sharing in your application.
+Diese Anleitung beschreibt die Datenbankoptionen und Einrichtungsschritte für die Aktivierung von Funktionen wie Chat Link Sharing in Ihrer FlowHero-Anwendung.
 
-### Choose Your Database:
+### Wählen Sie Ihre Datenbank:
 
-**1. Serverless Postgres (default):**
+**1. Serverless Postgres (Standard):**
 
-- Available on Vercel, Neon, and other platforms.
-- Less feature-rich but a suitable option depending on your needs.
-- **Connection String:** Replace placeholders with your Postgres credentials.
+- Verfügbar auf Vercel, Neon und anderen Plattformen.
+- Weniger funktionsreich, aber eine geeignete Option je nach Ihren Bedürfnissen.
+- **Verbindungszeichenfolge:** Ersetzen Sie die Platzhalter durch Ihre Postgres-Anmeldeinformationen.
   - `postgres://USER:PASS@SOMEHOST.postgres.vercel-storage.com/SOMEDB?pgbouncer=true&connect_timeout=15`
 
-**2. MongoDB Atlas (alternative):**
+**2. MongoDB Atlas (Alternative):**
 
-- **Highly Recommended:** More than a database, it's a data platform. MongoDB Atlas is a robust cloud-based platform that offers scalability, security, and a suite of developer tools. No need for a separate vector database, you can query your vector embeddings right within your operational database!
-- **Additional Features:** MongoDB Atlas is packed with unique features designed to streamline the development process such as: Atlas App Services, Atlas search (with vector search), Atlas charts, Data Federation, and more.
-- **Connection String:** Replace placeholders with your Atlas credentials.
+- **Sehr empfehlenswert:** Mehr als nur eine Datenbank, es ist eine Datenplattform. MongoDB Atlas ist eine robuste Cloud-basierte Plattform, die Skalierbarkeit, Sicherheit und eine Suite von Entwicklerwerkzeugen bietet. Keine Notwendigkeit für eine separate Vektordatenbank, Sie können Ihre Vektor-Embeddings direkt in Ihrer operativen Datenbank abfragen!
+- **Zusätzliche Funktionen:** MongoDB Atlas ist vollgepackt mit einzigartigen Funktionen, die den Entwicklungsprozess optimieren sollen, wie z.B.: Atlas App Services, Atlas Search (mit Vektorsuche), Atlas Charts, Data Federation und mehr.
+- **Verbindungszeichenfolge:** Ersetzen Sie die Platzhalter durch Ihre Atlas-Anmeldeinformationen.
   - `mongodb://USER:PASS@CLUSTER-NAME.mongodb.net/DATABASE-NAME?retryWrites=true&w=majority`
 
-### Environment Variables:
+### Umgebungsvariablen:
 
 #### Postgres:
 
 | Variable                              |                                                                                                      |
 |---------------------------------------|------------------------------------------------------------------------------------------------------|
 | `POSTGRES_PRISMA_URL`                 | `postgres://USER:PASS@SOMEHOST.postgres.vercel-storage.com/SOMEDB?pgbouncer=true&connect_timeout=15` |
-| `POSTGRES_URL_NON_POOLING` (optional) | URL for the Postgres database without pooling (specific use cases)                                   |
+| `POSTGRES_URL_NON_POOLING` (optional) | URL für die Postgres-Datenbank ohne Pooling (spezifische Anwendungsfälle)                                   |
 
 #### MongoDB:
 
@@ -35,9 +35,9 @@ This guide outlines the database options and setup steps for enabling features l
 
 ### MongoDB Atlas + Prisma
 
-When using MongoDB Atlas, you'll need to make the below changes to the file [`src/server/prisma/schema.prisma`](../src/server/prisma/schema.prisma).
+Wenn Sie MongoDB Atlas verwenden, müssen Sie die folgenden Änderungen an der Datei [`src/server/prisma/schema.prisma`](../src/server/prisma/schema.prisma) vornehmen.
 
-```
+```prisma
 ...
 datasource db {
   provider  = "mongodb"
@@ -45,22 +45,22 @@ datasource db {
 }
 
 //
-// Storage of Linked Data
+// Speicherung von verknüpften Daten
 //
 model LinkStorage {
   id String @id @default(uuid()) @map("_id")
 
-// ...rest of file
+// ...Rest der Datei
 ```
 
-### Initial Setup Steps:
+### Erste Einrichtungsschritte:
 
-1. **Run `npx prisma db push`:** Create or update the database schema (run once after connecting).
+1. **Führen Sie `npx prisma db push` aus:** Erstellen oder aktualisieren Sie das Datenbankschema (einmal nach dem Verbinden ausführen).
 
-### Additional Resources:
+### Zusätzliche Ressourcen:
 
-- Prisma documentation: [https://www.prisma.io/docs/](https://www.prisma.io/docs/)
+- Prisma-Dokumentation: [https://www.prisma.io/docs/](https://www.prisma.io/docs/)
 - MongoDB Atlas: [https://www.mongodb.com/atlas/database](https://www.mongodb.com/atlas/database)
 - Atlas App Services: [https://www.mongodb.com/docs/atlas/app-services/](https://www.mongodb.com/docs/atlas/app-services/)
-- Atlas vector search: [https://www.mongodb.com/products/platform/atlas-vector-search/](https://www.mongodb.com/products/platform/atlas-vector-search)
+- Atlas Vektorsuche: [https://www.mongodb.com/products/platform/atlas-vector-search/](https://www.mongodb.com/products/platform/atlas-vector-search)
 - Atlas Data Federation: [https://www.mongodb.com/products/platform/atlas-data-federation](https://www.mongodb.com/products/platform/atlas-data-federation)

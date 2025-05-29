@@ -1,112 +1,112 @@
-# Customizing and Creating Derivative Applications
+# Anpassen und Erstellen abgeleiteter Anwendungen für FlowHero
 
-This document outlines how to develop applications derived from big-AGI.
+Dieses Dokument beschreibt, wie man Anwendungen entwickelt, die von FlowHero (basierend auf big-AGI) abgeleitet sind.
 
-## Manual Customization
+## Manuelle Anpassung
 
-Application customization _requires manual code modifications or the use of environment variables_. Currently, **there is no admin panel to "managed" deployment customization** for enterprise use cases.
+Die Anpassung der Anwendung _erfordert manuelle Code-Änderungen oder die Verwendung von Umgebungsvariablen_. Derzeit gibt es **kein Admin-Panel zur "Verwaltung" der Anpassung von Bereitstellungen** für Unternehmensanwendungsfälle.
 
-| Required Code Alteration                                                              | Not Required                                                                                                              |
+| Erforderliche Code-Änderung                                                              | Nicht erforderlich                                                                                                              |
 |---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| - Persona changes<br>- UI theme customization<br>- Feature additions or modifications | - Setting API keys in [environment variables](environment-variables.md)<br>- Toggling features with environment variables |
-| Apply these to the source code before building the application                        | Set these post-build on local machines or cloud deployment, before application launch                                     |
+| - Persona-Änderungen<br>- UI-Theme-Anpassung<br>- Funktionserweiterungen oder -änderungen | - Setzen von API-Schlüsseln in [Umgebungsvariablen](environment-variables.md)<br>- Umschalten von Funktionen mit Umgebungsvariablen |
+| Wenden Sie diese auf den Quellcode an, bevor Sie die Anwendung erstellen                | Setzen Sie diese nach dem Erstellen auf lokalen Maschinen oder in der Cloud-Bereitstellung, bevor die Anwendung gestartet wird                                     |
 
 <br/>
 
-## Code Alterations
+## Code-Änderungen
 
-Start by creating a fork of the [big-AGI repository](https://github.com/enricoros/big-AGI) on GitHub for a personal development space.
-Understand the Architecture: big-AGI uses Next.js, React for the front end, and Node.js (Next.js edge functions) for the back end.
+Beginnen Sie damit, einen Fork des [FlowHero/big-AGI Repositories](https://github.com/enricoros/big-AGI) auf GitHub für einen persönlichen Entwicklungsbereich zu erstellen.
+Verstehen der Architektur: FlowHero verwendet Next.js, React für das Frontend und Node.js (Next.js Edge-Funktionen) für das Backend.
 
-### Add Authentication
+### Authentifizierung hinzufügen
 
-This necessitates a code change (file renaming) before build initiation, detailed in [deploy-authentication.md](deploy-authentication.md).
+Dies erfordert eine Code-Änderung (Dateiumbenennung) vor Beginn des Builds, detailliert in [deploy-authentication.md](deploy-authentication.md).
 
-### Increase Vercel Functions Timeout
+### Vercel Functions Timeout erhöhen
 
-For long-running operations, Vercel allows paid deployments to increase the timeout on Functions.
-Note that this applies to old-style Vercel Functions (based on Node.js) and not the new Edge Functions.
+Für langlaufende Operationen erlaubt Vercel bei kostenpflichtigen Bereitstellungen, das Timeout für Functions zu erhöhen.
+Beachten Sie, dass dies für Vercel Functions im alten Stil (basierend auf Node.js) gilt und nicht für die neuen Edge Functions.
 
-At time of writing, big-AGI has only 2 operations that run on Node.js Functions:
-browsing (fetching web pages) and sharing. They both can exceed 10 seconds, especially
-when fetching large pages or waiting for websites to be completed.
+Zum Zeitpunkt des Schreibens hat FlowHero (basierend auf big-AGI) nur 2 Operationen, die auf Node.js Functions laufen:
+Browsing (Abrufen von Webseiten) und Teilen. Beide können 10 Sekunden überschreiten, insbesondere
+beim Abrufen großer Seiten oder beim Warten auf die Fertigstellung von Websites.
 
-From the Vercel Project > Settings > General > Build & Development Settings,
-you can for instance set the build command to:
+Über Vercel Projekt > Einstellungen > Allgemein > Build- & Entwicklungseinstellungen,
+können Sie beispielsweise den Build-Befehl setzen auf:
 
 ```bash
 next build
 ```
 
-### Change the Personas (v1.x only)
+### Personas ändern (nur v1.x von big-AGI)
 
-Edit the `src/data.ts` file to customize personas. This file houses the default personas. You can add, remove, or modify these to meet your project's needs.
+Bearbeiten Sie die Datei `src/data.ts`, um Personas anzupassen. Diese Datei enthält die Standard-Personas. Sie können diese hinzufügen, entfernen oder ändern, um den Anforderungen Ihres Projekts gerecht zu werden.
 
-- [ ] Modify `src/data.ts` to alter default personas
+- [ ] `src/data.ts` ändern, um Standard-Personas zu modifizieren
 
-### Change the UI
+### UI ändern
 
-Adapt the UI to match your project's aesthetic, incorporate new features, or exclude unnecessary ones.
+Passen Sie die UI an die Ästhetik Ihres Projekts an, integrieren Sie neue Funktionen oder schließen Sie unnötige aus.
 
-- [ ] Adjust `src/common/app.theme.ts` for theme changes: colors, spacing, button appearance, animations, etc
-- [ ] Modify `src/common/app.config.tsx` to alter the application's name
-- [ ] Update `src/common/app.nav.tsx` to revise the navigation bar
+- [ ] `src/common/app.theme.ts` anpassen für Theme-Änderungen: Farben, Abstände, Erscheinungsbild von Schaltflächen, Animationen usw.
+- [ ] `src/common/app.config.tsx` ändern, um den Anwendungsnamen zu modifizieren
+- [ ] `src/common/app.nav.tsx` aktualisieren, um die Navigationsleiste zu überarbeiten
 
-### Add a Message of the Day
+### Nachricht des Tages hinzufügen
 
-You can display a temporary announcement banner at the top of the app using the `NEXT_PUBLIC_MOTD` environment variable.
+Sie können ein temporäres Ankündigungsbanner oben in der App anzeigen, indem Sie die Umgebungsvariable `NEXT_PUBLIC_MOTD` verwenden.
 
-- Set this variable in your deployment environment
-- The message supports template variables:
-  - `{{app_build_hash}}`: Current git commit hash
-  - `{{app_build_pkgver}}`: Package version
-  - `{{app_build_time}}`: Build timestamp as date
-  - `{{app_deployment_type}}`: Deployment type (local, docker, vercel, etc.)
-- Users can dismiss the message (until next page refresh)
-- Use it for version announcements, maintenance notices, or feature highlights
+- Setzen Sie diese Variable in Ihrer Bereitstellungsumgebung
+- Die Nachricht unterstützt Vorlagenvariablen:
+  - `{{app_build_hash}}`: Aktueller Git-Commit-Hash
+  - `{{app_build_pkgver}}`: Paketversion
+  - `{{app_build_time}}`: Build-Zeitstempel als Datum
+  - `{{app_deployment_type}}`: Bereitstellungstyp (lokal, Docker, Vercel usw.)
+- Benutzer können die Nachricht ausblenden (bis zum nächsten Seitenrefresh)
+- Verwenden Sie es für Versionsankündigungen, Wartungshinweise oder Funktionshighlights
 
-Example: `NEXT_PUBLIC_MOTD=🚀 New features available in {{app_build_pkgver}}! Try the improved Beam.`
+Beispiel: `NEXT_PUBLIC_MOTD=🚀 Neue Funktionen verfügbar in {{app_build_pkgver}}! Probieren Sie den verbesserten Beam aus.`
 
-## Testing & Deployment
+## Testen & Bereitstellung
 
-Test your application thoroughly using local development (refer to README.md for local build instructions). Deploy using your preferred hosting service. big-AGI supports deployment on platforms like Vercel, Docker, or any Node.js-compatible service, especially those supporting NextJS's "Edge Runtime."
+Testen Sie Ihre Anwendung gründlich mit lokaler Entwicklung (siehe README.md für lokale Build-Anweisungen). Stellen Sie sie mit Ihrem bevorzugten Hosting-Dienst bereit. FlowHero unterstützt die Bereitstellung auf Plattformen wie Vercel, Docker oder jedem Node.js-kompatiblen Dienst, insbesondere solchen, die NextJS "Edge Runtime" unterstützen.
 
-- [deploy-cloudflare.md](deploy-cloudflare.md): for Cloudflare Workers deployment
-- [deploy-docker.md](deploy-docker.md): for Docker deployment instructions and examples
-- [deploy-k8s.md](deploy-k8s.md): for Kubernetes deployment instructions and examples
+- [deploy-cloudflare.md](deploy-cloudflare.md): für die Bereitstellung mit Cloudflare Workers
+- [deploy-docker.md](deploy-docker.md): für Docker-Bereitstellungsanweisungen und -beispiele
+- [deploy-k8s.md](deploy-k8s.md): für Kubernetes-Bereitstellungsanweisungen und -beispiele
 
 ## Debugging
 
-The application includes a client-side logging system. You can view recent logs via the UI (Settings > Tools > Logs).
+Die Anwendung enthält ein clientseitiges Logging-System. Sie können aktuelle Logs über die UI (Einstellungen > Werkzeuge > Logs) einsehen.
 
-For deeper debugging during development:
+Für tiefergehendes Debugging während der Entwicklung:
 
-1. **Debug Page**: Access the `/info/debug` page for an overview of the application's environment, configuration, API status, and environment variables available to the client.
-2. **Conditional Breakpoints**: To automatically pause execution in your browser's developer tools when critical errors (`error`, `critical`, `DEV` levels) are logged to the console, set the following environment variable in your local `.env.local` file and restart your development server:
+1. **Debug-Seite**: Greifen Sie auf die Seite `/info/debug` zu, um einen Überblick über die Umgebung, Konfiguration, API-Status und für den Client verfügbare Umgebungsvariablen der Anwendung zu erhalten.
+2. **Bedingte Haltepunkte**: Um die Ausführung in den Entwicklertools Ihres Browsers automatisch anzuhalten, wenn kritische Fehler (Level `error`, `critical`, `DEV`) in der Konsole protokolliert werden, setzen Sie die folgende Umgebungsvariable in Ihrer lokalen `.env.local`-Datei und starten Sie Ihren Entwicklungsserver neu:
    ```bash
    NEXT_PUBLIC_DEBUG_BREAKS=true
    ```
-   This allows you to inspect the application state at the exact moment an important error occurs. This feature only works in development mode (`npm run dev`) and requires the environment variable to be explicitly set to `true`.
+   Dies ermöglicht es Ihnen, den Anwendungszustand genau in dem Moment zu untersuchen, in dem ein wichtiger Fehler auftritt. Diese Funktion funktioniert nur im Entwicklungsmodus (`npm run dev`) und erfordert, dass die Umgebungsvariable explizit auf `true` gesetzt ist.
 
 <br/>
 
-## Community Projects - Share Your Project
+## Community-Projekte - Teilen Sie Ihr Projekt
 
-After deployment, share your project with the community. We will link to your project to help others discover and learn from your work.
+Teilen Sie Ihr Projekt nach der Bereitstellung mit der Community. Wir werden auf Ihr Projekt verlinken, um anderen zu helfen, es zu entdecken und davon zu lernen.
 
-| Project                                                                                                                                                        | Features                                                                                                  | GitHub                                                                              |
+| Projekt                                                                                                                                                        | Funktionen                                                                                                  | GitHub                                                                              |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| 🚀 CoolAGI: Where AI meets Imagination<br/>![CoolAGI Logo](https://github.com/nextgen-user/freegpt4plus/assets/150797204/9b0e1232-4791-4d61-b949-16f9eb284c22) | Code Interpreter, Vision, Mind maps, Web Searches, Advanced Data Analytics, Large Data Handling and more! | [nextgen-user/CoolAGI](https://github.com/nextgen-user/CoolAGI)                     |
-| HL-GPT                                                                                                                                                         | Fully remodeled UI                                                                                        | [harlanlewis/nextjs-chatgpt-app](https://github.com/harlanlewis/nextjs-chatgpt-app) |
+| 🚀 CoolAGI: Wo KI auf Vorstellungskraft trifft<br/>![CoolAGI Logo](https://github.com/nextgen-user/freegpt4plus/assets/150797204/9b0e1232-4791-4d61-b949-16f9eb284c22) | Code Interpreter, Vision, Mindmaps, Websuchen, Fortgeschrittene Datenanalysen, Umgang mit großen Datenmengen und mehr! | [nextgen-user/CoolAGI](https://github.com/nextgen-user/CoolAGI)                     |
+| HL-GPT                                                                                                                                                         | Vollständig überarbeitete UI                                                                                        | [harlanlewis/nextjs-chatgpt-app](https://github.com/harlanlewis/nextjs-chatgpt-app) |
 
-For public projects, update your README.md with your modifications and submit a pull request to add your project to our list, aiding in its discovery.
+Für öffentliche Projekte aktualisieren Sie Ihre README.md mit Ihren Änderungen und reichen Sie einen Pull-Request ein, um Ihr Projekt unserer Liste hinzuzufügen und so dessen Auffindbarkeit zu unterstützen.
 
 <br/>
 
-## Best Practices
+## Bewährte Praktiken
 
-- **Stay Updated**: Frequently merge updates from the main big-AGI repository to incorporate bug fixes and new features.
-- **Keep It Open Source**: Consider maintaining your derivative as open source to foster community contributions.
-- **Engage with the Community**: Leverage platforms like GitHub, Discord, or Reddit for feedback, collaboration, and project promotion.
+- **Bleiben Sie auf dem Laufenden**: Führen Sie häufig Updates aus dem Haupt-Repository von FlowHero/big-AGI zusammen, um Fehlerbehebungen und neue Funktionen zu integrieren.
+- **Halten Sie es Open Source**: Erwägen Sie, Ihr Derivat als Open Source zu pflegen, um Community-Beiträge zu fördern.
+- **Engagieren Sie sich in der Community**: Nutzen Sie Plattformen wie GitHub, Discord oder Reddit für Feedback, Zusammenarbeit und Projektförderung.
 
-Developing a derivative application is an opportunity to explore new possibilities with AI and share your innovations with the global community. We look forward to seeing your contributions.
+Die Entwicklung einer abgeleiteten Anwendung ist eine Gelegenheit, neue Möglichkeiten mit KI zu erkunden und Ihre Innovationen mit der globalen Community zu teilen. Wir freuen uns auf Ihre Beiträge.

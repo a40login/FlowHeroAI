@@ -1,85 +1,86 @@
-# Deploy `big-AGI` with Kubernetes ☸️
+# `FlowHero` mit Kubernetes bereitstellen ☸️
 
-In this tutorial, we will guide you through the process of deploying big-AGI
-in a Kubernetes environment using the kubectl command-line tool.
+In diesem Tutorial führen wir Sie durch den Prozess der Bereitstellung von FlowHero
+in einer Kubernetes-Umgebung mit dem kubectl Kommandozeilen-Tool.
 
-## First Deployment
+## Erstmalige Bereitstellung
 
-### Step 1: Clone the big-AGI repository
-
-```bash
-$ git clone https://github.com/enricoros/big-agi
-$ cd ./big-agi/docs/k8s
-```
-
-### Step 2: Create the namespace
+### Schritt 1: Das FlowHero-Repository klonen
 
 ```bash
-$ kubectl create namespace ns-big-agi
+$ git clone https://github.com/enricoros/big-agi # Annahme: FlowHero ist ein Fork/basierend auf big-agi
+$ cd ./big-agi/docs/k8s # Pfad entsprechend anpassen, falls sich die Ordnerstruktur für FlowHero geändert hat
 ```
 
-### Step 3: Fill in the key information into env-secret.yaml
+### Schritt 2: Den Namespace erstellen
 
-All variables are optional. By default, Kubernetes Secret uses Base64 for
-encode/decode, so please don't do a git commit after filling in the keys
-to avoid leaking sensitive information.
+```bash
+$ kubectl create namespace ns-flowhero # Angepasst für FlowHero
+```
 
-We provide an empty `env-secret.yaml` file as a template.
-You can fill in the necessary information using a text editor.
+### Schritt 3: Die Schlüsselinformationen in env-secret.yaml eintragen
+
+Alle Variablen sind optional. Standardmäßig verwendet Kubernetes Secret Base64 zum
+Kodieren/Dekodieren, also führen Sie bitte keinen Git-Commit durch, nachdem Sie die Schlüssel eingetragen haben,
+um das Durchsickern sensibler Informationen zu vermeiden.
+
+Wir stellen eine leere `env-secret.yaml`-Datei als Vorlage bereit.
+Sie können die notwendigen Informationen mit einem Texteditor eintragen.
 
 ```bash
 $ nano env-secret.yaml
 ```
 
-### Step 4: Deploying Kubernetes Resources
+### Schritt 4: Kubernetes-Ressourcen bereitstellen
 
 ```bash
-$ kubectl apply -f big-agi-deployment.yaml -f env-secret.yaml
+$ kubectl apply -f big-agi-deployment.yaml -f env-secret.yaml # Dateinamen beibehalten, falls sie sich auf die Struktur des geklonten Repos beziehen
 ```
+Hinweis: Wenn `big-agi-deployment.yaml` spezifisch für FlowHero angepasst wurde, sollte der Dateiname dies widerspiegeln. Ohne diese Info wird der Originalname beibehalten.
 
-### Step 5: Verifying the Resource Statuses
+### Schritt 5: Überprüfen der Ressourcenstatus
 
 ```bash
-$ kubectl -n ns-big-agi get svc,pod,deployment
+$ kubectl -n ns-flowhero get svc,pod,deployment # Namespace angepasst
 NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-service/svc-big-agi   ClusterIP   10.0.198.118   <none>        3000/TCP   63m
+service/svc-flowhero   ClusterIP   10.0.198.118   <none>        3000/TCP   63m # Service-Name angepasst
 
 NAME                                     READY   STATUS    RESTARTS   AGE
-pod/deployment-big-agi-xxxxxxxx-yyyyy    1/1     Running   0          39m
+pod/deployment-flowhero-xxxxxxxx-yyyyy    1/1     Running   0          39m # Deployment-Name angepasst
 
 NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/deployment-big-agi   1/1     1            1           63m
+deployment.apps/deployment-flowhero   1/1     1            1           63m # Deployment-Name angepasst
 ```
 
-### Step 6: Testing the Service
+### Schritt 6: Testen des Dienstes
 
-You can test the service by port-forwarding the service to your local machine:
+Sie können den Dienst testen, indem Sie ihn per Port-Forwarding auf Ihre lokale Maschine weiterleiten:
 
 ```bash
-$ kubectl -n ns-big-agi port-forward service/svc-big-agi 3000
+$ kubectl -n ns-flowhero port-forward service/svc-flowhero 3000 # Angepasst für FlowHero
 Forwarding from 127.0.0.1:3000 -> 3000
 Forwarding from [::1]:3000 -> 3000
 ```
 
-Now you can access the service at `http://localhost:3000`, and you should see the big-AGI homepage.
+Jetzt können Sie auf den Dienst unter `http://localhost:3000` zugreifen und sollten die FlowHero-Homepage sehen.
 
-## Updating big-AGI
+## FlowHero aktualisieren
 
-To update big-AGI to the latest version:
+Um FlowHero auf die neueste Version zu aktualisieren:
 
-1. Pull the latest changes from the repository:
+1. Holen Sie die neuesten Änderungen aus dem Repository:
    ```bash
-   $ git pull origin main
+   $ git pull origin main # Oder der entsprechende Branch für FlowHero
    ```
 
-2. Apply the updated deployment:
+2. Wenden Sie das aktualisierte Deployment an:
    ```bash
-   $ kubectl apply -f big-agi-deployment.yaml
+   $ kubectl apply -f big-agi-deployment.yaml # Dateiname wie oben
    ```
 
-This will trigger a rolling update of the deployment with the latest image.
+Dies löst ein rollierendes Update des Deployments mit dem neuesten Image aus.
 
-**Note**: If you're deploying big-AGI behind a reverse proxy, you may need to configure
-your proxy to support streaming. See our [Reverse Proxy Deployment Guide](deploy-reverse-proxy.md) for more information.
+**Hinweis**: Wenn Sie FlowHero hinter einem Reverse-Proxy bereitstellen, müssen Sie möglicherweise
+Ihren Proxy konfigurieren, um Streaming zu unterstützen. Weitere Informationen finden Sie in unserer [Reverse-Proxy-Bereitstellungsanleitung](deploy-reverse-proxy.md).
 
-Note: For production use, consider setting up an Ingress Controller or Load Balancer instead of using port-forward.
+Hinweis: Für den Produktionseinsatz sollten Sie die Einrichtung eines Ingress Controllers oder Load Balancers anstelle von Port-Forwarding in Betracht ziehen.

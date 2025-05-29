@@ -1,90 +1,90 @@
-# Configuring Azure OpenAI Service with `big-AGI`
+# Azure OpenAI Service mit `FlowHero` konfigurieren
 
-The entire procedure takes about 5 minutes and involves creating an Azure account,
-setting up the Azure OpenAI service, deploying models, and configuring `big-AGI`
-to access these models.
+Der gesamte Vorgang dauert etwa 5 Minuten und umfasst das Erstellen eines Azure-Kontos,
+das Einrichten des Azure OpenAI-Dienstes, das Bereitstellen von Modellen und das Konfigurieren von `FlowHero` (basierend auf big-AGI),
+um auf diese Modelle zuzugreifen.
 
-Please note that Azure operates on a 'pay-as-you-go' pricing model and requires
-credit card information tied to a 'subscription' to the Azure service.
+Bitte beachten Sie, dass Azure nach einem Pay-as-you-go-Preismodell arbeitet und
+Kreditkarteninformationen erfordert, die mit einem "Abonnement" des Azure-Dienstes verbunden sind.
 
-## Configuring `big-AGI`
+## `FlowHero` konfigurieren
 
-If you have an `API Endpoint` and `API Key`, you can configure big-AGI as follows:
+Wenn Sie einen `API-Endpunkt` und einen `API-Schlüssel` haben, können Sie FlowHero wie folgt konfigurieren:
 
-1. Launch the `big-AGI` application
-2. Go to the **Models** settings
-3. Add a Vendor and select **Azure OpenAI**
-    - Enter the Endpoint (e.g., 'https://your-openai-api-1234.openai.azure.com/')
-    - Enter the API Key (e.g., 'fd5...........................ba')
+1. Starten Sie die `FlowHero`-Anwendung.
+2. Gehen Sie zu den Einstellungen für **Modelle**.
+3. Fügen Sie einen Anbieter hinzu und wählen Sie **Azure OpenAI**.
+    - Geben Sie den Endpunkt ein (z.B. 'https://ihr-openai-api-1234.openai.azure.com/').
+    - Geben Sie den API-Schlüssel ein (z.B. 'fd5...........................ba').
 
-The deployed models are now available in the application. If you don't have a configured
-Azure OpenAI service instance, continue with the next section.
+Die bereitgestellten Modelle sind nun in der Anwendung verfügbar. Wenn Sie keine konfigurierte
+Azure OpenAI-Dienstinstanz haben, fahren Sie mit dem nächsten Abschnitt fort.
 
-In addition to using the UI, configuration can also be done using
-[environment variables](environment-variables.md).
+Zusätzlich zur Verwendung der Benutzeroberfläche kann die Konfiguration auch über
+[Umgebungsvariablen](environment-variables.md) erfolgen.
 
-## Setting Up Azure
+## Azure einrichten
 
-### Step 1: Azure Account & Subscription
+### Schritt 1: Azure-Konto & Abonnement
 
-1. Create an account on [azure.microsoft.com](https://azure.microsoft.com/en-us/)
-2. Go to the [Azure Portal](https://portal.azure.com/)
-3. Click on **Create a resource** in the top left corner
-4. Search for **Subscription** and select **[Create Subscription](https://portal.azure.com/#create/Microsoft.Subscription)**
-    - Fill in the required fields and click on **Create**
-    - Note down the **Subscription ID** (e.g., `12345678-1234-1234-1234-123456789012`)
+1. Erstellen Sie ein Konto auf [azure.microsoft.com](https://azure.microsoft.com/de-de/).
+2. Gehen Sie zum [Azure-Portal](https://portal.azure.com/).
+3. Klicken Sie auf **Ressource erstellen** in der oberen linken Ecke.
+4. Suchen Sie nach **Abonnement** und wählen Sie **[Abonnement erstellen](https://portal.azure.com/#create/Microsoft.Subscription)**.
+    - Füllen Sie die erforderlichen Felder aus und klicken Sie auf **Erstellen**.
+    - Notieren Sie sich die **Abonnement-ID** (z.B. `12345678-1234-1234-1234-123456789012`).
 
-### Step 2: Apply for Azure OpenAI Service
+### Schritt 2: Antrag für Azure OpenAI Service stellen
 
-We'll now be creating "OpenAI"-specific resources on Azure. This requires to 'apply',
-and acceptance should be quick (even as low as minutes).
+Wir erstellen nun "OpenAI"-spezifische Ressourcen auf Azure. Dies erfordert einen 'Antrag',
+und die Annahme sollte schnell erfolgen (sogar in wenigen Minuten).
 
-1. Visit [Azure OpenAI Service](https://aka.ms/azure-openai)
-2. Click on **Apply for access**
-    - Fill in the required fields (including the subscription ID) and click on **Apply**
+1. Besuchen Sie den [Azure OpenAI Service](https://aka.ms/azure-openai).
+2. Klicken Sie auf **Zugang beantragen**.
+    - Füllen Sie die erforderlichen Felder aus (einschließlich der Abonnement-ID) und klicken Sie auf **Beantragen**.
 
-Once your application is accepted, you can create OpenAI resources on Azure.
+Sobald Ihr Antrag angenommen wurde, können Sie OpenAI-Ressourcen auf Azure erstellen.
 
-### Step 3: Create Azure OpenAI Resource
+### Schritt 3: Azure OpenAI-Ressource erstellen
 
-For more information, see [Azure: Create and deploy OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal)
+Weitere Informationen finden Sie unter [Azure: OpenAI erstellen und bereitstellen](https://learn.microsoft.com/de-de/azure/ai-services/openai/how-to/create-resource?pivots=web-portal).
 
-1. Click on **Create a resource** in the top left corner
-2. Search for **OpenAI** and select **[Create OpenAI](https://portal.azure.com/#create/Microsoft.CognitiveServicesOpenAI)**
-3. Fill in the necessary fields on the **Create OpenAI** page
-   ![Creating an OpenAI service](pixels/config-azure-openai-create.png)
-    - Select the subscription
-    - Select a resource group or create a new one
-    - Select the region. Note that the region determines the available models.
-   > For instance, **Canada East** offers GPT-4-32k models, For the full list, see [GPT-4 models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)
-    - Name the service (e.g., `your-openai-api-1234`)
-    - Select a pricing tier (e.g., `S0` for standard)
-    - Select: "All networks, including the internet, can access this resource."
-    - Click on **Review + create** and then **Create**
+1. Klicken Sie auf **Ressource erstellen** in der oberen linken Ecke.
+2. Suchen Sie nach **OpenAI** und wählen Sie **[OpenAI erstellen](https://portal.azure.com/#create/Microsoft.CognitiveServicesOpenAI)**.
+3. Füllen Sie die notwendigen Felder auf der Seite **OpenAI erstellen** aus.
+   ![OpenAI-Dienst erstellen](pixels/config-azure-openai-create.png)
+    - Wählen Sie das Abonnement aus.
+    - Wählen Sie eine Ressourcengruppe aus oder erstellen Sie eine neue.
+    - Wählen Sie die Region aus. Beachten Sie, dass die Region die verfügbaren Modelle bestimmt.
+   > Zum Beispiel bietet **Kanada (Ost)** GPT-4-32k-Modelle an. Die vollständige Liste finden Sie unter [GPT-4-Modelle](https://learn.microsoft.com/de-de/azure/ai-services/openai/concepts/models).
+    - Benennen Sie den Dienst (z.B. `ihr-openai-api-1234`).
+    - Wählen Sie eine Preisstufe (z.B. `S0` für Standard).
+    - Wählen Sie: "Alle Netzwerke, einschließlich des Internets, können auf diese Ressource zugreifen."
+    - Klicken Sie auf **Überprüfen + erstellen** und dann auf **Erstellen**.
 
-After creating the resource, you can access the API Keys and Endpoints. At any point, you can go to
-the OpenAI Service instance page to get this information.
+Nachdem die Ressource erstellt wurde, können Sie auf die API-Schlüssel und Endpunkte zugreifen. Sie können jederzeit
+zur Seite der OpenAI-Dienstinstanz gehen, um diese Informationen zu erhalten.
 
-- Click on **Go to resource**
-- Click on **Develop**
-    - Copy the `Endpoint`, called "Language API", e.g. 'https://your-openai-api-1234.openai.azure.com/'
-    - Copy `KEY 1`
+- Klicken Sie auf **Zur Ressource wechseln**.
+- Klicken Sie auf **Entwickeln**.
+    - Kopieren Sie den `Endpunkt`, genannt "Sprach-API", z.B. 'https://ihr-openai-api-1234.openai.azure.com/'.
+    - Kopieren Sie `SCHLÜSSEL 1`.
 
-### Step 4: Deploy Models
+### Schritt 4: Modelle bereitstellen
 
-By default, Azure OpenAI resource instances don't have models available. You need to deploy the models you want to use.
+Standardmäßig haben Azure OpenAI-Ressourcinstanzen keine Modelle verfügbar. Sie müssen die Modelle bereitstellen, die Sie verwenden möchten.
 
-1. Click on **Model Deployments > Manage Deployments**
-2. Click on **+Create New Deployment**
-   ![Deploying a model](pixels/config-azure-openai-deploy.png)
-    - Select the model you want to deploy
-    - Optionally select a version
-    - name the model, e.g., `gpt4-32k-0613`
+1. Klicken Sie auf **Modellbereitstellungen > Bereitstellungen verwalten**.
+2. Klicken Sie auf **+Neue Bereitstellung erstellen**.
+   ![Modell bereitstellen](pixels/config-azure-openai-deploy.png)
+    - Wählen Sie das Modell aus, das Sie bereitstellen möchten.
+    - Wählen Sie optional eine Version aus.
+    - Benennen Sie das Modell, z.B. `gpt4-32k-0613`.
 
-Repeat as necessary for each model you want to deploy.
+Wiederholen Sie dies bei Bedarf für jedes Modell, das Sie bereitstellen möchten.
 
-## Resources
+## Ressourcen
 
-- [Azure OpenAI Service Documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/)
-- [Guide: Create an Azure OpenAI Resource](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal)
-- [Azure OpenAI Models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)
+- [Azure OpenAI Service Dokumentation](https://learn.microsoft.com/de-de/azure/ai-services/openai/)
+- [Anleitung: Azure OpenAI-Ressource erstellen](https://learn.microsoft.com/de-de/azure/ai-services/openai/how-to/create-resource?pivots=web-portal)
+- [Azure OpenAI-Modelle](https://learn.microsoft.com/de-de/azure/ai-services/openai/concepts/models)

@@ -1,57 +1,57 @@
-# big-AGI Analytics
+# FlowHero Analytics
 
-The open-source big-AGI project provides support for the following analytics services:
+Das Open-Source-Projekt FlowHero (basierend auf big-AGI) bietet Unterstützung für die folgenden Analysedienste:
 
-- **Google Analytics 4**: manual setup required
-- **PostHog Analytics**: manual setup required
-- **Vercel Analytics**: automatic when deployed to Vercel
+- **Google Analytics 4**: manuelle Einrichtung erforderlich
+- **PostHog Analytics**: manuelle Einrichtung erforderlich
+- **Vercel Analytics**: automatisch bei Bereitstellung auf Vercel
 
-The following is a quick overview of the Analytics options for the deployers of this open-source project.
-big-AGI is deployed to many large-scale and enterprise though various ways (custom builds, Docker, Vercel, Cloudflare, etc.),
-and this guide is for its customization.
+Das Folgende ist ein kurzer Überblick über die Analytics-Optionen für diejenigen, die dieses Open-Source-Projekt bereitstellen.
+FlowHero wird auf vielfältige Weise (benutzerdefinierte Builds, Docker, Vercel, Cloudflare usw.) für viele groß angelegte und unternehmensweite Implementierungen bereitgestellt,
+und diese Anleitung dient seiner Anpassung.
 
-## Service Configuration
+## Dienstkonfiguration
 
 ### Google Analytics 4
 
-- Why: user engagement and retention, performance insights, personalization, content optimization
-- What: https://support.google.com/analytics/answer/11593727
+- Warum: Nutzerengagement und -bindung, Leistungseinblicke, Personalisierung, Inhaltsoptimierung
+- Was: https://support.google.com/analytics/answer/11593727
 
-Google Analytics 4 (GA4) is a powerful tool for understanding user behavior and engagement.
-This can help optimize big-AGI, understanding which features are needed/users and which aren't.
+Google Analytics 4 (GA4) ist ein leistungsstarkes Werkzeug zum Verständnis des Nutzerverhaltens und -engagements.
+Dies kann helfen, FlowHero zu optimieren und zu verstehen, welche Funktionen benötigt/von Nutzern verwendet werden und welche nicht.
 
-To enable Google Analytics 4, you need to set the `NEXT_PUBLIC_GA4_MEASUREMENT_ID` environment variable
-before starting the local build or the docker build (i.e. at build time), at which point the
-server/container will be able to report analytics to your Google Analytics 4 property.
+Um Google Analytics 4 zu aktivieren, müssen Sie die Umgebungsvariable `NEXT_PUBLIC_GA4_MEASUREMENT_ID`
+vor dem Starten des lokalen Builds oder des Docker-Builds (d.h. zur Build-Zeit) setzen. Zu diesem Zeitpunkt
+kann der Server/Container Analysen an Ihre Google Analytics 4-Property senden.
 
-As of Feb 27, 2024, this feature is in development.
+Stand Februar 27, 2024, befindet sich diese Funktion in der Entwicklung.
 
 ### PostHog Analytics
 
-- Why: feature usage tracking, user journeys, conversion optimization, product analytics
-- What: page views, page leave events, user interactions, and deployment context
+- Warum: Nachverfolgung der Funktionsnutzung, Nutzerpfade, Konversionsoptimierung, Produktanalysen
+- Was: Seitenaufrufe, Seitenverlassensereignisse, Nutzerinteraktionen und Bereitstellungskontext
 
-PostHog provides comprehensive product analytics with privacy controls. It helps understand how users interact with big-AGI's features, identify opportunities for improvement, and optimize the user experience.
+PostHog bietet umfassende Produktanalysen mit Datenschutzkontrollen. Es hilft zu verstehen, wie Nutzer mit den Funktionen von FlowHero interagieren, Verbesserungsmöglichkeiten zu identifizieren und die Nutzererfahrung zu optimieren.
 
-To enable PostHog, set the `NEXT_PUBLIC_POSTHOG_KEY` environment variable at build time. PostHog is configured with tracking optimization and privacy in mind:
+Um PostHog zu aktivieren, setzen Sie die Umgebungsvariable `NEXT_PUBLIC_POSTHOG_KEY` zur Build-Zeit. PostHog ist mit Blick auf Tracking-Optimierung und Datenschutz konfiguriert:
 
-- Uses a proxy endpoint (`/a/ph`) to avoid ad blockers
-- Respects user opt-out preferences via local storage
-- Tracks only essential information without PII
-- Adds deployment context for better segmentation
+- Verwendet einen Proxy-Endpunkt (`/a/ph`), um Werbeblocker zu vermeiden
+- Respektiert Nutzer-Opt-out-Präferenzen über Local Storage
+- Verfolgt nur wesentliche Informationen ohne personenbezogene Daten (PII)
+- Fügt Bereitstellungskontext für eine bessere Segmentierung hinzu
 
-The implementation follows PostHog's best practices for Next.js applications and includes manual page view tracking for proper single-page application support.
+Die Implementierung folgt den Best Practices von PostHog für Next.js-Anwendungen und beinhaltet manuelles Page-View-Tracking für eine korrekte Single-Page-Application-Unterstützung.
 
 ### Vercel Analytics
 
-- Why: understand coarse traction, and identify deployment issues - all without tracking individual users
-- What: top pages, top referrers, country of origin, operating system, browser, and page speed metrics
+- Warum: Grobe Traktion verstehen und Bereitstellungsprobleme identifizieren - alles ohne einzelne Nutzer zu verfolgen
+- Was: Top-Seiten, Top-Referrer, Herkunftsland, Betriebssystem, Browser und Seitenladegeschwindigkeitsmetriken
 
-Vercel Analytics and Speed Insights are local API endpoints deployed to your domain, so everything stays within your
-domain. Furthermore, the Vercel Analytics service is privacy-friendly, and does not track individual users.
+Vercel Analytics und Speed Insights sind lokale API-Endpunkte, die auf Ihrer Domain bereitgestellt werden, sodass alles innerhalb Ihrer
+Domain bleibt. Darüber hinaus ist der Vercel Analytics-Dienst datenschutzfreundlich und verfolgt keine einzelnen Nutzer.
 
-This service is avaialble to system administrators when deploying to Vercel. It is automatically enabled when deploying to Vercel.
-The code that activates Vercel Analytics is located in the `src/pages/_app.tsx` file:
+Dieser Dienst steht Systemadministratoren bei der Bereitstellung auf Vercel zur Verfügung. Er wird automatisch aktiviert, wenn auf Vercel bereitgestellt wird.
+Der Code, der Vercel Analytics aktiviert, befindet sich in der Datei `src/pages/_app.tsx`:
 
 ```tsx
 const MyApp = ({ Component, emotionCache, pageProps }: MyAppProps) => <>
@@ -62,19 +62,19 @@ const MyApp = ({ Component, emotionCache, pageProps }: MyAppProps) => <>
 </>;
 ```
 
-When big-AGI is served on Vercel hosts, the `process.env.NEXT_PUBLIC_VERCEL_URL` environment variable is trueish, and
-analytics will be sent by default to the Vercel Analytics service which is deployed by Vercel IF configured from the
-Vercel project dashboard.
+Wenn FlowHero auf Vercel-Hosts bereitgestellt wird, ist die Umgebungsvariable `process.env.NEXT_PUBLIC_VERCEL_URL` wahrheitsgemäß, und
+Analysen werden standardmäßig an den Vercel Analytics-Dienst gesendet, der von Vercel bereitgestellt wird, WENN er über das
+Vercel-Projektdashboard konfiguriert wurde.
 
-In summary: to turn it on: activate the `Analytics` service in the Vercel project dashboard.
+Zusammenfassend: Um es einzuschalten: Aktivieren Sie den `Analytics`-Dienst im Vercel-Projektdashboard.
 
-## Configurations
+## Konfigurationen
 
-| Scope                                                                                                                   | Default                   | Description / Instructions                                                                                                                                                  |
+| Umfang                                                                                                                   | Standard                   | Beschreibung / Anweisungen                                                                                                                                                  |
 |-------------------------------------------------------------------------------------------------------------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Your **Source** builds of big-AGI                                                                                       | None                      | **Google Analytics**: set environment variable at build time · **PostHog**: set environment variable at build time · **Vercel**: enable Vercel Analytics from the dashboard | 
-| Your **Docker** builds of big-AGI                                                                                       | None                      | (**Vercel**: n/a) · **Google Analytics**: set environment variable at `docker build` time · **PostHog**: set environment variable at `docker build` time.                   |
-| [get.big-agi.com](https://get.big-agi.com) (**Big-AGI 1.x**)                                                            | Vercel + Google + PostHog | The main website ([privacy policy](https://big-agi.com/privacy)) hosted for free for anyone.                                                                                |
-| [prebuilt Docker packages](https://github.com/enricoros/big-AGI/pkgs/container/big-agi) (**Big-AGI 1.x**, 'latest' tag) | Google Analytics          | **Vercel**: n/a · **Google Analytics**: set to the big-agi.com Google Analytics for analytics and improvements · **PostHog**: n/a                                           |
+| Ihre **Quell**-Builds von FlowHero                                                                                       | Keine                      | **Google Analytics**: Umgebungsvariable zur Build-Zeit setzen · **PostHog**: Umgebungsvariable zur Build-Zeit setzen · **Vercel**: Vercel Analytics über das Dashboard aktivieren | 
+| Ihre **Docker**-Builds von FlowHero                                                                                       | Keine                      | (**Vercel**: n. z.) · **Google Analytics**: Umgebungsvariable zur `docker build`-Zeit setzen · **PostHog**: Umgebungsvariable zur `docker build`-Zeit setzen.                   |
+| [get.big-agi.com](https://get.big-agi.com) (**Big-AGI 1.x**, Basis für FlowHero)                                                            | Vercel + Google + PostHog | Die Hauptwebsite ([Datenschutzrichtlinie](https://big-agi.com/privacy)), kostenlos für jedermann gehostet.                                                                                |
+| [Vorgefertigte Docker-Pakete](https://github.com/enricoros/big-AGI/pkgs/container/big-agi) (**Big-AGI 1.x**, 'latest' Tag, Basis für FlowHero) | Google Analytics          | **Vercel**: n. z. · **Google Analytics**: auf big-agi.com Google Analytics für Analysen und Verbesserungen gesetzt · **PostHog**: n. z.                                           |
 
-Note: this information is updated as of March 3, 2025 and can change at any time.
+Hinweis: Diese Informationen sind auf dem Stand vom 3. März 2025 und können sich jederzeit ändern.

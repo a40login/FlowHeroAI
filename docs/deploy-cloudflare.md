@@ -1,68 +1,67 @@
-# Deploying a Next.js App on Cloudflare Pages
+# Eine Next.js-App auf Cloudflare Pages bereitstellen
 
-> WARNING: Cloudflare Pages does not support traditional NodeJS runtimes, but only Edge Runtime functions.
+> WARNUNG: Cloudflare Pages unterstützt keine traditionellen NodeJS-Laufzeitumgebungen, sondern nur Edge Runtime-Funktionen.
 >
-> In this project we use Prisma connected to serverless Postgres, which at the moment cannot run on
-> edge functions, so we cannot deploy this project on Cloudflare Pages.
+> In diesem Projekt verwenden wir Prisma, das mit serverless Postgres verbunden ist, was derzeit nicht auf
+> Edge-Funktionen ausgeführt werden kann. Daher können wir dieses Projekt (FlowHero, basierend auf big-AGI) nicht auf Cloudflare Pages bereitstellen.
 >
-> Workaround: Step 3.4. has been added below, to DELETE the NodeJS traditional runtime - which means that some
-> parts of this application will not work.
->  - [Side effects](https://github.com/enricoros/big-agi/blob/main/src/apps/chat/trade/server/trade.router.ts#L19):
-     > Sharing functionality to DB, and import from ChatGPT share, and post to Paste.GG will not work
->  - See [Issue 174](https://github.com/enricoros/big-agi/issues/174).
+> Workaround: Schritt 3.4. wurde unten hinzugefügt, um die traditionelle NodeJS-Laufzeitumgebung zu LÖSCHEN - was bedeutet, dass einige
+> Teile dieser Anwendung nicht funktionieren werden.
+>  - [Nebeneffekte](https://github.com/enricoros/big-agi/blob/main/src/apps/chat/trade/server/trade.router.ts#L19):
+     > Sharing-Funktionalität zur DB, Import von ChatGPT Share und Posten auf Paste.GG werden nicht funktionieren.
+>  - Siehe [Issue 174](https://github.com/enricoros/big-agi/issues/174).
 >
-> Longer term: follow [prisma/prisma: Support Edge Function deployments](https://github.com/prisma/prisma/issues/21394)
-> and convert the Node runtime to Edge runtime once Prisma supports it.
+> Langfristig: Folgen Sie [prisma/prisma: Support Edge Function deployments](https://github.com/prisma/prisma/issues/21394)
+> und konvertieren Sie die Node-Laufzeitumgebung in eine Edge-Laufzeitumgebung, sobald Prisma dies unterstützt.
 
-This guide provides steps to deploy your Next.js app on Cloudflare Pages.
-It is based on the [official Cloudflare developer documentation](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/),
-with some additional steps.
+Diese Anleitung beschreibt die Schritte zur Bereitstellung Ihrer Next.js-App (FlowHero) auf Cloudflare Pages.
+Sie basiert auf der [offiziellen Cloudflare-Entwicklerdokumentation](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/),
+mit einigen zusätzlichen Schritten.
 
-## Step 1: Repository Forking
+## Schritt 1: Repository Forking
 
-Fork the repository to your personal GitHub account.
+Forken Sie das Repository (von big-AGI oder FlowHero) in Ihr persönliches GitHub-Konto.
 
-## Step 2: Linking Cloudflare Pages to Your GitHub Account
+## Schritt 2: Cloudflare Pages mit Ihrem GitHub-Konto verknüpfen
 
-1. Navigate to the Cloudflare Pages section and click on the `Create a project` button.
-2. Click `Connect To Git` and grant Cloudflare Pages access to either all GitHub account repositories or selected repositories.
-   We recommend using selected Repo access and selecting the forked repository from step 1.
+1. Navigieren Sie zum Cloudflare Pages-Bereich und klicken Sie auf die Schaltfläche `Create a project` (Projekt erstellen).
+2. Klicken Sie auf `Connect To Git` (Mit Git verbinden) und gewähren Sie Cloudflare Pages Zugriff auf entweder alle GitHub-Kontorepositories oder ausgewählte Repositories.
+   Wir empfehlen die Verwendung des Zugriffs auf ausgewählte Repositories und die Auswahl des geforkten Repositorys aus Schritt 1.
 
-## Step 3: Configuring Build and Deployments
+## Schritt 3: Build und Bereitstellungen konfigurieren
 
-1. After selecting the forked GitHub repository, click the **Begin Setup** button
-2. On this page, set your **Project name**, **Production branch** (e.g., main), and your Build settings
-3. Choose `Next.js` from the **Framework preset** dropdown menu
-4. Set a custom **Build Command**:
+1. Nachdem Sie das geforkte GitHub-Repository ausgewählt haben, klicken Sie auf die Schaltfläche **Begin Setup** (Setup starten).
+2. Auf dieser Seite legen Sie Ihren **Projektnamen**, Ihren **Produktionszweig** (z. B. main) und Ihre Build-Einstellungen fest.
+3. Wählen Sie `Next.js` aus dem Dropdown-Menü **Framework preset** (Framework-Voreinstellung).
+4. Legen Sie einen benutzerdefinierten **Build-Befehl** fest:
     - `rm app/api/cloud/[trpc]/route.ts && npx @cloudflare/next-on-pages@1`
-    - see the tradeoffs for this deletion on the notice at the top
-5. Keep the **Build output directory** as default
-6. Click the **Save and Deploy** button
+    - Beachten Sie die Kompromisse für diese Löschung im Hinweis oben.
+5. Behalten Sie das **Build-Ausgabeverzeichnis** als Standard bei.
+6. Klicken Sie auf die Schaltfläche **Save and Deploy** (Speichern und Bereitstellen).
 
-## Step 4: Monitoring the Deployment Process
+## Schritt 4: Überwachung des Bereitstellungsprozesses
 
-Observe the process as it initializes your build environment, clones the GitHub repository, builds the application, and deploys it
-to the Cloudflare Network. Once complete, proceed to the project you created.
+Beobachten Sie den Prozess, wie er Ihre Build-Umgebung initialisiert, das GitHub-Repository klont, die Anwendung erstellt und sie
+im Cloudflare-Netzwerk bereitstellt. Sobald dies abgeschlossen ist, fahren Sie mit dem von Ihnen erstellten Projekt fort.
 
-## Step 5: Required: Set the `nodejs_compat` compatibility flag
+## Schritt 5: Erforderlich: Setzen Sie das Kompatibilitätsflag `nodejs_compat`
 
-1. Navigate to the [Settings > Functions](https://dash.cloudflare.com/?to=/:account/pages/view/:pages-project/settings/functions) page of your newly created project
-2. Scroll to `Compatibility flags` and enter "`nodejs_compat`" for both **Production** and **Preview** environments.
-   It should look like this: ![](pixels/config-deploy-cloudflare-compat2.png)
-3. Re-deploy your project for the new flags to take effect
+1. Navigieren Sie zur Seite [Settings > Functions](https://dash.cloudflare.com/?to=/:account/pages/view/:pages-project/settings/functions) (Einstellungen > Funktionen) Ihres neu erstellten Projekts.
+2. Scrollen Sie zu `Compatibility flags` (Kompatibilitätsflags) und geben Sie "`nodejs_compat`" für sowohl die **Produktions-** als auch die **Vorschauumgebungen** ein.
+   Es sollte so aussehen: ![](pixels/config-deploy-cloudflare-compat2.png)
+3. Stellen Sie Ihr Projekt erneut bereit, damit die neuen Flags wirksam werden.
 
-## Step 6: (Optional) Custom Domain Configuration
+## Schritt 6: (Optional) Konfiguration der benutzerdefinierten Domain
 
-Use the `Custom domains` tab to set up your domain via CNAME.
+Verwenden Sie den Tab `Custom domains` (Benutzerdefinierte Domains), um Ihre Domain über CNAME einzurichten.
 
-## Step 7: (Optional) Access Policy and Web Analytics Configuration
+## Schritt 7: (Optional) Konfiguration der Zugriffsrichtlinie und Webanalyse
 
-Navigate to the `Settings` page and enable the following settings:
+Navigieren Sie zur Seite `Settings` (Einstellungen) und aktivieren Sie die folgenden Einstellungen:
 
-1. Access Policy: Restrict [preview deployments](https://developers.cloudflare.com/pages/platform/preview-deployments/)
-   to members of your Cloudflare account via one-time pin and restrict primary `*.YOURPROJECT.pages.dev` domain.
-   Refer to [Cloudflare Pages known issues](https://developers.cloudflare.com/pages/platform/known-issues/#enabling-access-on-your-pagesdev-domain)
-   for more details.
-2. Enable Web Analytics.
+1. Zugriffsrichtlinie: Beschränken Sie [Vorschau-Deployments](https://developers.cloudflare.com/pages/platform/preview-deployments/)
+   auf Mitglieder Ihres Cloudflare-Kontos über einen Einmal-PIN und beschränken Sie die primäre `*.YOURPROJECT.pages.dev`-Domain.
+   Weitere Details finden Sie unter [Bekannte Probleme mit Cloudflare Pages](https://developers.cloudflare.com/pages/platform/known-issues/#enabling-access-on-your-pagesdev-domain).
+2. Webanalyse aktivieren.
 
-Congratulations! You have successfully deployed your Next.js app on Cloudflare Pages.
+Herzlichen Glückwunsch! Sie haben Ihre Next.js-App (FlowHero) erfolgreich auf Cloudflare Pages bereitgestellt.

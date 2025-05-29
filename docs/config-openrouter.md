@@ -1,34 +1,33 @@
-# OpenRouter Configuration
+# OpenRouter Konfiguration für FlowHero
 
-[OpenRouter](https://openrouter.ai) is a standalone, premium service
-that provides access to <Link href='https://openrouter.ai/docs#models' target='_blank'>exclusive AI models</Link>
-such as GPT-4 32k, Claude, and more. These models are typically not available to the public.
-This document details the process of integrating OpenRouter with big-AGI.
+[OpenRouter](https://openrouter.ai) ist ein eigenständiger Premium-Dienst,
+der Zugriff auf <Link href='https://openrouter.ai/docs#models' target='_blank'>exklusive KI-Modelle</Link>
+wie GPT-4 32k, Claude und weitere bietet. Diese Modelle sind typischerweise nicht öffentlich verfügbar.
+Dieses Dokument beschreibt den Prozess der Integration von OpenRouter mit FlowHero.
 
-### 1. OpenRouter Account Setup and API Key Generation
+### 1. OpenRouter Konto-Setup und API-Schlüssel-Generierung
 
-1. Register for an OpenRouter account at [openrouter.ai](https://openrouter.ai) by clicking on Sign In > Continue with Google.
-2. Top up your account (minimum $5) by navigating to [openrouter.ai/account](https://openrouter.ai/account) > Add Credits > Pay with Stripe.
-3. Generate an API key at [openrouter.ai/keys](https://openrouter.ai/keys) > API Key > Generate API Key.
-   - **Remember to copy and securely store your API key** - the key will not be displayed again and will be in the format `sk-or-v1-...`.
-   - Keep the key confidential as it can be used to expend your credits.
+1. Registrieren Sie sich für ein OpenRouter-Konto unter [openrouter.ai](https://openrouter.ai), indem Sie auf Anmelden > Mit Google fortfahren klicken.
+2. Laden Sie Ihr Konto auf (mindestens 5 $), indem Sie zu [openrouter.ai/account](https://openrouter.ai/account) > Guthaben hinzufügen > Mit Stripe bezahlen navigieren.
+3. Generieren Sie einen API-Schlüssel unter [openrouter.ai/keys](https://openrouter.ai/keys) > API-Schlüssel > API-Schlüssel generieren.
+   - **Denken Sie daran, Ihren API-Schlüssel zu kopieren und sicher aufzubewahren** - der Schlüssel wird nicht erneut angezeigt und hat das Format `sk-or-v1-...`.
+   - Halten Sie den Schlüssel geheim, da er verwendet werden kann, um Ihr Guthaben aufzubrauchen.
 
-### 2. Integrating OpenRouter with big-AGI
+### 2. Integration von OpenRouter mit FlowHero
 
-1. Launch big-AGI, and navigate to the AI **Models** settings.
-2. Add a Vendor, and select **OpenRouter**.
+1. Starten Sie FlowHero und navigieren Sie zu den KI-Einstellungen für **Modelle**.
+2. Fügen Sie einen Anbieter hinzu und wählen Sie **OpenRouter**.
    ![feature-openrouter-add.png](pixels/feature-openrouter-add.png)
-3. Input the API key into the **OpenRouter API Key** field, and load the Models.
+3. Geben Sie den API-Schlüssel in das Feld **OpenRouter API Key** (OpenRouter API-Schlüssel) ein und laden Sie die Modelle.
    ![feature-openrouter-configure.png](pixels/feature-openrouter-configure.png)
-4. OpenAI GPT4-32k and other models will now be accessible and selectable in the application.
+4. OpenAI GPT4-32k und andere Modelle sind nun in der Anwendung zugänglich und auswählbar.
 
-In addition to using the UI, configuration can also be done using
-[environment variables](environment-variables.md).
+Zusätzlich zur Verwendung der Benutzeroberfläche kann die Konfiguration auch über
+[Umgebungsvariablen](environment-variables.md) erfolgen.
 
-### Pricing
+### Preise
 
-OpenRouter independently manages its service and pricing and is not affiliated with big-AGI.
-For more detailed information, please visit [this page](https://openrouter.ai/docs#models).
+OpenRouter verwaltet seinen Dienst und seine Preise unabhängig und ist nicht mit FlowHero verbunden.
+Für detailliertere Informationen besuchen Sie bitte [diese Seite](https://openrouter.ai/docs#models).
 
-Please note that running large models such as GPT-4 32k can be costly and may rapidly consume
-credits - a single prompt may cost $1 or more, at the time of writing.
+Bitte beachten Sie, dass das Ausführen großer Modelle wie GPT-4 32k kostspielig sein und Guthaben schnell aufbrauchen kann - ein einzelner Prompt kann zum Zeitpunkt des Schreibens 1 $ oder mehr kosten.

@@ -1,45 +1,45 @@
-# Authentication
+# Authentifizierung
 
-`big-AGI` does not come with built-in authentication. To secure your deployment, you can implement authentication
-in one of the following ways:
+`FlowHero` wird nicht mit integrierter Authentifizierung ausgeliefert. Um Ihre Bereitstellung zu sichern, können Sie die Authentifizierung
+auf eine der folgenden Arten implementieren:
 
-1. Build `big-AGI` with support for ⬇️ [HTTP Authentication](#http-authentication)
-2. Utilize user authentication features provided by your ⬇️ [cloud deployment platform](#cloud-deployments-authentication)
-3. Develop a custom authentication solution
+1. Erstellen Sie `FlowHero` mit Unterstützung für ⬇️ [HTTP-Authentifizierung](#http-authentifizierung)
+2. Nutzen Sie Benutzerauthentifizierungsfunktionen, die von Ihrer ⬇️ [Cloud-Bereitstellungsplattform](#cloud-bereitstellungs-authentifizierung) bereitgestellt werden
+3. Entwickeln Sie eine benutzerdefinierte Authentifizierungslösung
 
 <br/>
 
-### HTTP Authentication
+### HTTP-Authentifizierung
 
-[HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) is a simple method
-to secure your application.
+Die [HTTP Basic Authentication](https://developer.mozilla.org/de-DE/docs/Web/HTTP/Authentication) ist eine einfache Methode,
+um Ihre Anwendung zu sichern.
 
-To enable it in `big-AGI`, you **must manually build the application**:
+Um sie in `FlowHero` zu aktivieren, **müssen Sie die Anwendung manuell erstellen**:
 
-- Build `big-AGI` with HTTP authentication enabled:
-  - Clone the repository
-  - Rename `middleware_BASIC_AUTH.ts` to `middleware.ts`
-  - Build: usual simple build procedure (e.g. [Deploy manually](installation.md#Local-Production-build) or [Deploying with Docker](deploy-docker.md))
+- Erstellen Sie `FlowHero` mit aktivierter HTTP-Authentifizierung:
+  - Klonen Sie das Repository
+  - Benennen Sie `middleware_BASIC_AUTH.ts` in `middleware.ts` um
+  - Erstellen: üblicher einfacher Erstellungsprozess (z.B. [Manuell bereitstellen](installation.md#Local-Production-build) oder [Mit Docker bereitstellen](deploy-docker.md))
 
-- Configure the following [environment variables](environment-variables.md) before launching `big-AGI`:
+- Konfigurieren Sie die folgenden [Umgebungsvariablen](environment-variables.md), bevor Sie `FlowHero` starten:
 ```dotenv
-HTTP_BASIC_AUTH_USERNAME=<your username>
-HTTP_BASIC_AUTH_PASSWORD=<your password>
+HTTP_BASIC_AUTH_USERNAME=<Ihr Benutzername>
+HTTP_BASIC_AUTH_PASSWORD=<Ihr Passwort>
 ```
 
-- Start the application 🔒
+- Starten Sie die Anwendung 🔒
 
 <br/>
 
-### Cloud Deployments Authentication
+### Cloud-Bereitstellungs-Authentifizierung
 
-> This approach allows you to enable authentication without rebuilding the application by using the features
-> provided by your cloud platform to manage user accounts and access.
+> Dieser Ansatz ermöglicht es Ihnen, die Authentifizierung zu aktivieren, ohne die Anwendung neu erstellen zu müssen, indem Sie die Funktionen
+> Ihrer Cloud-Plattform zur Verwaltung von Benutzerkonten und Zugriff nutzen.
 
-Many cloud deployment platforms offer built-in authentication mechanisms. Refer to the platform's documentation
-for setup instructions:
+Viele Cloud-Bereitstellungsplattformen bieten integrierte Authentifizierungsmechanismen. Lesen Sie die Dokumentation der Plattform
+für Einrichtungsanweisungen:
 
-1. [CloudFlare Access / Zero Trust](https://www.cloudflare.com/zero-trust/products/access/)
+1. [CloudFlare Access / Zero Trust](https://www.cloudflare.com/de-de/zero-trust/products/access/)
 2. [Vercel Authentication](https://vercel.com/docs/security/deployment-protection/methods-to-protect-deployments/vercel-authentication)
 3. [Vercel Password Protection](https://vercel.com/docs/security/deployment-protection/methods-to-protect-deployments/password-protection)
-4. Let us know when you test more solutions (Heroku, AWS IAM, Google IAP, etc.)
+4. Lassen Sie uns wissen, wenn Sie weitere Lösungen testen (Heroku, AWS IAM, Google IAP, etc.)

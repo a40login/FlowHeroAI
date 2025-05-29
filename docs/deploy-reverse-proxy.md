@@ -1,24 +1,24 @@
-# Advanced: Deploying big-AGI behind a Reverse Proxy
+# Erweitert: FlowHero hinter einem Reverse-Proxy bereitstellen
 
-Note: if you don't have a reverse proxy set up, you can skip this guide.
+Hinweis: Wenn Sie keinen Reverse-Proxy eingerichtet haben, können Sie diese Anleitung überspringen.
 
-If you're deploying big-AGI behind a reverse proxy, you may want to configure your proxy to support streaming output.
-This guide provides instructions on how to configure your reverse proxy to support streaming output from big-AGI.
+Wenn Sie FlowHero hinter einem Reverse-Proxy bereitstellen, möchten Sie möglicherweise Ihren Proxy so konfigurieren, dass er Streaming-Ausgaben unterstützt.
+Diese Anleitung enthält Anweisungen, wie Sie Ihren Reverse-Proxy konfigurieren, um Streaming-Ausgaben von FlowHero zu unterstützen.
 
-This is for advanced deployments, and you should have a basic understanding of how reverse proxies work.
+Dies ist für fortgeschrittene Bereitstellungen gedacht, und Sie sollten ein grundlegendes Verständnis davon haben, wie Reverse-Proxys funktionieren.
 
-## Nginx Configuration
+## Nginx-Konfiguration
 
-If you're using Nginx as your reverse proxy, add the following configuration to your server block:
+Wenn Sie Nginx als Ihren Reverse-Proxy verwenden, fügen Sie die folgende Konfiguration zu Ihrem Server-Block hinzu:
 
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name ihre-domain.com;
 
     location / {
-        # ...your specific proxy_pass configuration, example below...
-        proxy_pass http://localhost:3000;  # Assuming big-AGI is running on port 3000
+        # ...Ihre spezifische proxy_pass-Konfiguration, Beispiel unten...
+        proxy_pass http://localhost:3000;  # Annahme: FlowHero läuft auf Port 3000
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -26,14 +26,14 @@ server {
         proxy_cache_bypass $http_upgrade;
         # ...
 
-        # Important: Disable buffering for the streaming responses (SSE)
-        chunked_transfer_encoding on;   # Turn on chunked transfer encoding
-        proxy_buffering off;            # Turn off proxy buffering
-        proxy_cache off;                # Turn off caching
-        tcp_nodelay on;                 # Turn on TCP NODELAY option, disable delay ACK algorithm
-        tcp_nopush on;                  # Turn on TCP NOPUSH option, disable Nagle algorithm
+        # Wichtig: Pufferung für Streaming-Antworten (SSE) deaktivieren
+        chunked_transfer_encoding on;   # Chunked Transfer Encoding einschalten
+        proxy_buffering off;            # Proxy-Pufferung ausschalten
+        proxy_cache off;                # Caching ausschalten
+        tcp_nodelay on;                 # TCP NODELAY-Option einschalten, Delay-ACK-Algorithmus deaktivieren
+        tcp_nopush on;                  # TCP NOPUSH-Option einschalten, Nagle-Algorithmus deaktivieren
 
-        # Important: Longer timeouts (5 min)
+        # Wichtig: Längere Timeouts (5 Min.)
         keepalive_timeout 300;
         proxy_connect_timeout 300;
         proxy_read_timeout 300;
@@ -42,17 +42,17 @@ server {
 }
 ```
 
-This configuration disables caching and buffering, enables chunked transfer encoding, and adjusts TCP settings to optimize for streaming content.
+Diese Konfiguration deaktiviert Caching und Pufferung, aktiviert Chunked Transfer Encoding und passt TCP-Einstellungen an, um Streaming-Inhalte zu optimieren.
 
-## Troubleshooting
+## Fehlerbehebung
 
-If you're experiencing issues with streaming not working, especially when deploying behind a reverse proxy,
-ensure that your proxy is configured to support streaming output as described above.
+Wenn Sie Probleme damit haben, dass Streaming nicht funktioniert, insbesondere bei der Bereitstellung hinter einem Reverse-Proxy,
+stellen Sie sicher, dass Ihr Proxy wie oben beschrieben für die Unterstützung von Streaming-Ausgaben konfiguriert ist.
 
-## Additional Resources
+## Zusätzliche Ressourcen
 
-- For Docker deployments, see our [Docker Deployment Guide](deploy-docker.md)
-- For Kubernetes deployments, see our [Kubernetes Deployment Guide](deploy-k8s.md)
-- For general installation instructions, see our [Installation Guide](installation.md)
+- Für Docker-Bereitstellungen siehe unsere [Docker-Bereitstellungsanleitung](deploy-docker.md)
+- Für Kubernetes-Bereitstellungen siehe unsere [Kubernetes-Bereitstellungsanleitung](deploy-k8s.md)
+- Für allgemeine Installationsanweisungen siehe unsere [Installationsanleitung](installation.md)
 
-If you continue to experience issues, please reach out to our [community support channels](../README.md#-get-involved).
+Wenn Sie weiterhin Probleme haben, wenden Sie sich bitte an unsere [Community-Supportkanäle](../README.md#-get-involved).

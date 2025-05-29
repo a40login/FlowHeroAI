@@ -1,54 +1,54 @@
-# Integrating LM Studio with big-AGI
+# LM Studio mit FlowHero integrieren
 
-Quickly set up LM Studio with big-AGI to run local and open LLMs on your computer for enhanced privacy and control over AI interactions.
+Richten Sie LM Studio schnell mit FlowHero ein, um lokale und offene LLMs auf Ihrem Computer für verbesserte Privatsphäre und Kontrolle über KI-Interaktionen auszuführen.
 
-## Video Tutorial
+## Videoanleitung
 
-For a visual step-by-step guide, watch our [YouTube tutorial](https://www.youtube.com/watch?v=MqXzxVokMDk).
+Eine visuelle Schritt-für-Schritt-Anleitung finden Sie in unserem [YouTube-Tutorial](https://www.youtube.com/watch?v=MqXzxVokMDk).
 
-[![Running big-AGI locally with LM Studio YouTube Tutorial](http://img.youtube.com/vi/MqXzxVokMDk/0.jpg)](http://www.youtube.com/watch?v=MqXzxVokMDk "Running big-AGI locally with LM Studio")
+[![FlowHero lokal mit LM Studio ausführen YouTube-Tutorial](http://img.youtube.com/vi/MqXzxVokMDk/0.jpg)](http://www.youtube.com/watch?v=MqXzxVokMDk "FlowHero lokal mit LM Studio ausführen")
 
 
-## Quick Setup Guide
+## Kurzanleitung zur Einrichtung
 
-### Installing big-AGI
+### FlowHero installieren
 
-Clone and set up big-AGI:
+FlowHero (basierend auf big-AGI) klonen und einrichten:
 
 ```bash
-git clone https://github.com/enricoros/big-agi.git && cd big-agi
-npm install # Or: yarn install
-npm run dev # Or: yarn dev
-# If missing dependencies:
-npm install @mui/material # Or: yarn add @mui/material
+git clone https://github.com/enricoros/big-agi.git && cd big-agi # Ggf. anpassen für FlowHero Repo
+npm install # Oder: yarn install
+npm run dev # Oder: yarn dev
+# Falls Abhängigkeiten fehlen:
+npm install @mui/material # Oder: yarn add @mui/material
 ```
 
-### Configuring LM Studio
+### LM Studio konfigurieren
 
-Ensure LM Studio is running (default: [http://localhost:1234](http://localhost:1234)).
-Check the URL and modify if different.
-1. Download local models in LM Studio
-2. Start the LM Studio server
-3. Optionally. Check the logs
+Stellen Sie sicher, dass LM Studio läuft (Standard: [http://localhost:1234](http://localhost:1234)).
+Überprüfen Sie die URL und ändern Sie sie gegebenenfalls.
+1. Laden Sie lokale Modelle in LM Studio herunter.
+2. Starten Sie den LM Studio Server.
+3. Optional: Überprüfen Sie die Protokolle.
 
-### Integration in big-AGI
+### Integration in FlowHero
 
-1. In big-AGI, navigate to **Models** > **Add** > **LM Studio**
-2. Enter the API URL: `http://localhost:1234` (modify if different)
-3. Refresh by clicking on the `Models` button to load models from LM Studio
+1. Navigieren Sie in FlowHero zu **Modelle** > **Hinzufügen** > **LM Studio**.
+2. Geben Sie die API-URL ein: `http://localhost:1234` (ändern Sie diese gegebenenfalls).
+3. Aktualisieren Sie, indem Sie auf die Schaltfläche `Modelle` klicken, um Modelle aus LM Studio zu laden.
 
-In addition to using the UI, configuration can also be done using
-[environment variables](environment-variables.md).
+Zusätzlich zur Verwendung der Benutzeroberfläche kann die Konfiguration auch über
+[Umgebungsvariablen](environment-variables.md) erfolgen.
 
-## Troubleshooting
+## Fehlerbehebung
 
-- **Missing @mui/material**: Execute `npm install @mui/material` or `yarn add @mui/material`
-- **Connection Issues**: Check LM Studio's URL and ensure it's operational
+- **Fehlendes @mui/material**: Führen Sie `npm install @mui/material` oder `yarn add @mui/material` aus.
+- **Verbindungsprobleme**: Überprüfen Sie die URL von LM Studio und stellen Sie sicher, dass es betriebsbereit ist.
 
 
-## Further Assistance
+## Weitere Unterstützung
 
-Advanced configurations and more:
+Erweiterte Konfigurationen und mehr:
 
-- big-AGI Community: [Discord](https://discord.gg/MkH4qj2Jp9)
-- LM Studio: [LM Studio home page](https://lmstudio.ai/)
+- FlowHero/big-AGI Community: [Discord](https://discord.gg/MkH4qj2Jp9)
+- LM Studio: [LM Studio Homepage](https://lmstudio.ai/)

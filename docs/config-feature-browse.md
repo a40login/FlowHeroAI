@@ -1,118 +1,118 @@
-# Browse Functionality in big-AGI 🌐
+# Browse-Funktionalität in FlowHero 🌐
 
-Allows users to load web pages across various components of `big-AGI`. This feature is supported by Puppeteer-based
-browsing services, which are the most common way to render web pages in a headless environment.
+Ermöglicht Benutzern das Laden von Webseiten über verschiedene Komponenten von `FlowHero` (basierend auf big-AGI). Diese Funktion wird von Puppeteer-basierten
+Browsing-Diensten unterstützt, die die gängigste Methode zum Rendern von Webseiten in einer monitorlosen (headless) Umgebung darstellen.
 
-Once configured, the Browsing service provides the following functionality:
+Einmal konfiguriert, bietet der Browsing-Dienst die folgende Funktionalität:
 
-- ✅ **Paste a URL**: Simply paste/drag a URL into the chat, and `big-AGI` will load and attach the page (very effective)
-- ✅ **Use /browse**: Type `/browse [URL]` in the chat to command `big-AGI` to load the specified web page
-- ✅ **ReAct**: ReAct will automatically use the `loadURL()` function whenever a URL is encountered
+- ✅ **URL einfügen**: Fügen Sie einfach eine URL per Kopieren/Einfügen oder Drag & Drop in den Chat ein, und `FlowHero` lädt und hängt die Seite an (sehr effektiv).
+- ✅ **/browse verwenden**: Geben Sie `/browse [URL]` in den Chat ein, um `FlowHero` anzuweisen, die angegebene Webseite zu laden.
+- ✅ **ReAct**: ReAct verwendet automatisch die Funktion `loadURL()`, sobald eine URL angetroffen wird.
 
-It does not yet support the following functionality:
+Folgende Funktionalität wird noch nicht unterstützt:
 
-- ✖️ **Auto-browsing by LLMs**: if an LLM encounters a URL, it will NOT load the page and will likely respond
-  that it cannot browse the web - No technical limitation, just haven't gotten to implement this yet outside of `/react` yet
+- ✖️ **Automatisches Browsen durch LLMs**: Wenn ein LLM auf eine URL stößt, wird es die Seite NICHT laden und wahrscheinlich antworten,
+  dass es nicht im Web browsen kann - Keine technische Einschränkung, nur noch nicht außerhalb von `/react` implementiert.
 
-First of all, you need to procure a Puppteer web browsing service endpoint. `big-AGI` supports services like:
+Zuerst müssen Sie einen Puppeteer Web-Browsing-Dienstendpunkt beschaffen. `FlowHero` unterstützt Dienste wie:
 
-| Service                                                                              | Working | Type        | Location       | Special Features                            |
-|--------------------------------------------------------------------------------------|---------|-------------|----------------|---------------------------------------------|
-| [BrightData Scraping Browser](https://brightdata.com/products/scraping-browser)      | Yes     | Proprietary | Cloud          | Advanced scraping tools, global IP pool     |
-| [Cloudflare Browser Rendering](https://developers.cloudflare.com/browser-rendering/) | ?       | Proprietary | Cloud          | Integrated CDN, optimized browser rendering |
-| ⬇️ [Browserless 2.0](#-browserless-20)                                               | Okay    | OpenSource  | Local (Docker) | Parallelism, debug viewer, advanced APIs    |
-| ⬇️ [Your Chrome Browser (ALPHA)](#-your-own-chrome-browser)                          | Alpha   | Proprietary | Local (Chrome) | Personal, experimental use (ALPHA!)         |
-| other Puppeteer-based WSS Services                                                   | ?       | Varied      | Cloud/Local    | Service-specific features                   |
+| Dienst                                                                              | Funktionierend | Typ         | Standort       | Besondere Merkmale                            |
+|--------------------------------------------------------------------------------------|----------------|-------------|----------------|---------------------------------------------|
+| [BrightData Scraping Browser](https://brightdata.com/de/products/scraping-browser)   | Ja             | Proprietär  | Cloud          | Erweiterte Scraping-Tools, globaler IP-Pool |
+| [Cloudflare Browser Rendering](https://developers.cloudflare.com/browser-rendering/) | ?              | Proprietär  | Cloud          | Integriertes CDN, optimiertes Browser-Rendering |
+| ⬇️ [Browserless 2.0](#-browserless-20)                                               | Okay           | OpenSource  | Lokal (Docker) | Parallelität, Debug-Viewer, erweiterte APIs |
+| ⬇️ [Ihr Chrome Browser (ALPHA)](#-ihr-eigener-chrome-browser)                          | Alpha          | Proprietär  | Lokal (Chrome) | Persönlicher, experimenteller Gebrauch (ALPHA!) |
+| andere Puppeteer-basierte WSS-Dienste                                                | ?              | Variiert    | Cloud/Lokal    | Dienstspezifische Funktionen                  |
 
-## Configuration
+## Konfiguration
 
-1. **Procure an Endpoint**
-   - Ensure that your browsing service is running (remote or local) and has a WebSocket endpoint available
-   - Write down the address: `wss://${auth}@{some host}:{port}`, or ws:// for local services on your machine
+1. **Endpunkt beschaffen**
+   - Stellen Sie sicher, dass Ihr Browsing-Dienst läuft (entfernt oder lokal) und einen WebSocket-Endpunkt verfügbar hat.
+   - Notieren Sie die Adresse: `wss://${auth}@{ein-host}:{port}`, oder `ws://` für lokale Dienste auf Ihrer Maschine.
 
-2. **Configure `big-AGI`**
-   - navigate to **Preferences** > **Tools** > **Browse**
-   - Enter the 'wss://...' connection string provided by your browsing service
+2. **`FlowHero` konfigurieren**
+   - Navigieren Sie zu **Einstellungen** > **Werkzeuge** > **Browsen**.
+   - Geben Sie die `wss://...`-Verbindungszeichenfolge ein, die von Ihrem Browsing-Dienst bereitgestellt wird.
 
-3. **Enable Features**: Choose which browse-related features you want to enable:
-   - **Attach URLs**: Automatically load and attach a page when pasting a URL into the composer
-   - **/browse Command**: Use the `/browse` command in the chat to load a web page
-   - **ReAct**: Enable the `loadURL()` function in ReAct for advanced interactions
+3. **Funktionen aktivieren**: Wählen Sie aus, welche browse-bezogenen Funktionen Sie aktivieren möchten:
+   - **URLs anhängen**: Eine Seite automatisch laden und anhängen, wenn eine URL in den Composer eingefügt wird.
+   - **/browse Befehl**: Verwenden Sie den `/browse`-Befehl im Chat, um eine Webseite zu laden.
+   - **ReAct**: Aktivieren Sie die `loadURL()`-Funktion in ReAct für erweiterte Interaktionen.
 
 ### 🌐 Browserless 2.0
 
-[Browserless 2.0](https://github.com/browserless/browserless) is a Docker-based service that provides a headless
-browsing experience compatible with `big-AGI`. An open-source solution that simplifies web automation tasks,
-in a scalable manner.
+[Browserless 2.0](https://github.com/browserless/browserless) ist ein Docker-basierter Dienst, der ein monitorloses (headless)
+Browsing-Erlebnis bietet, das mit `FlowHero` kompatibel ist. Eine Open-Source-Lösung, die Webautomatisierungsaufgaben
+auf skalierbare Weise vereinfacht.
 
-Launch Browserless with:
+Starten Sie Browserless mit:
 
 ```bash
 docker run -p 9222:3000 browserless/chrome:latest
 ```
 
-Now you can use the following connection string in `big-AGI`: `ws://127.0.0.1:9222`.
-You can also browse to [http://127.0.0.1:9222](http://127.0.0.1:9222) to see the Browserless debug viewer
-and configure some options.
+Jetzt können Sie die folgende Verbindungszeichenfolge in `FlowHero` verwenden: `ws://127.0.0.1:9222`.
+Sie können auch zu [http://127.0.0.1:9222](http://127.0.0.1:9222) browsen, um den Browserless Debug-Viewer zu sehen
+und einige Optionen zu konfigurieren.
 
-The chat agent won't be able to access the web sites if the browserless container does not have direct Internet access. You can resolve the issue by defining internet proxy for the running container. You can then use the evironment file in the a `docker-compose.yaml
+Der Chat-Agent kann nicht auf die Webseiten zugreifen, wenn der Browserless-Container keinen direkten Internetzugang hat. Sie können das Problem lösen, indem Sie einen Internet-Proxy für den laufenden Container definieren. Sie können dann die Umgebungsdatei in einer `docker-compose.yaml` verwenden:
 
-```
+```yaml
  browserless:
     image: browserless/chrome:latest
     env_file:
       - .env
     ports:
-      - "9222:3000"  # Map host's port 9222 to container's port 3000
+      - "9222:3000"  # Host-Port 9222 auf Container-Port 3000 abbilden
     environment:
       - MAX_CONCURRENT_SESSIONS=10
 ```
 
-You can then add the proxy lines to your `.env` file.
+Sie können dann die Proxy-Zeilen zu Ihrer `.env`-Datei hinzufügen.
 
 ```
 https_proxy=http://PROXY-IP:PROXY-PORT
 http_proxy=http://PROXY-IP:PROXY-PORT
 ```
 
-This is how you can define it in a one liner docker
+So können Sie es in einem Einzeiler-Docker definieren:
 `docker run --env https_proxy=http://PROXY-IP:PROXY-PORT --env http_proxy=http://PROXY-IP:PROXY-PORT -p 9222:3000 browserless/chrome:latest `
 
-Note: if you are using `docker-compose`, please see the
-[docker/docker-compose-browserless.yaml](docker/docker-compose-browserless.yaml) file for an example
-on how to run `big-AGI` and Browserless simultaneously in a single application.
+Hinweis: Wenn Sie `docker-compose` verwenden, sehen Sie sich bitte die
+Datei [docker/docker-compose-browserless.yaml](docker/docker-compose-browserless.yaml) für ein Beispiel
+an, wie `FlowHero` und Browserless gleichzeitig in einer einzigen Anwendung ausgeführt werden können.
 
 
-### 🌐 Your own Chrome browser
+### 🌐 Ihr eigener Chrome Browser
 
-***EXPERIMENTAL - UNTESTED*** - You can use your own Chrome browser as a browsing service, by configuring it to expose
-a WebSocket endpoint.
+***EXPERIMENTELL - UNGETESTET*** - Sie können Ihren eigenen Chrome-Browser als Browsing-Dienst verwenden, indem Sie ihn so konfigurieren, dass er
+einen WebSocket-Endpunkt bereitstellt.
 
-- close all the Chrome instances (on Windows, check the Task Manager if still running)
-- start Chrome with the following command line options (on Windows, you can edit the shortcut properties):
+- Schließen Sie alle Chrome-Instanzen (unter Windows überprüfen Sie den Task-Manager, ob er noch läuft).
+- Starten Sie Chrome mit den folgenden Befehlszeilenoptionen (unter Windows können Sie die Verknüpfungseigenschaften bearbeiten):
   - `--remote-debugging-port=9222`
-- go to http://localhost:9222/json/version and copy the `webSocketDebuggerUrl` value
-  - it should be something like: `ws://localhost:9222/...`
-- paste the value into the Endpoint configuration (see point 2 in the configuration)
+- Gehen Sie zu http://localhost:9222/json/version und kopieren Sie den Wert `webSocketDebuggerUrl`.
+  - Er sollte etwa so aussehen: `ws://localhost:9222/...`
+- Fügen Sie den Wert in die Endpunktkonfiguration ein (siehe Punkt 2 in der Konfiguration).
 
-### Server-Side Configuration
+### Serverseitige Konfiguration
 
-You can set the Puppeteer WebSocket endpoint (`PUPPETEER_WSS_ENDPOINT`) in the deployment before running it.
-This is useful for self-hosted instances or when you want to pre-configure the endpoint for all users, and will
-allow your to skip points 2 and 3 above.
+Sie können den Puppeteer WebSocket-Endpunkt (`PUPPETEER_WSS_ENDPOINT`) in der Bereitstellung festlegen, bevor Sie sie ausführen.
+Dies ist nützlich für selbst gehostete Instanzen oder wenn Sie den Endpunkt für alle Benutzer vorkonfigurieren möchten und
+ermöglicht es Ihnen, die Punkte 2 und 3 oben zu überspringen.
 
-Always deploy your own user authentication, authorization and security solution. For this feature, the tRPC
-route that provides browsing service, shall be secured with a user authentication and authorization solution,
-to prevent unauthorized access to the browsing service.
+Stellen Sie immer Ihre eigene Benutzerauthentifizierungs-, Autorisierungs- und Sicherheitslösung bereit. Für diese Funktion sollte die tRPC-Route,
+die den Browsing-Dienst bereitstellt, mit einer Benutzerauthentifizierungs- und Autorisierungslösung gesichert werden,
+um unbefugten Zugriff auf den Browsing-Dienst zu verhindern.
 
-## Support
+## Unterstützung
 
-If you encounter any issues or have questions about configuring the browse functionality, join our community on Discord for support and discussions.
+Wenn Sie Probleme haben oder Fragen zur Konfiguration der Browse-Funktionalität haben, treten Sie unserer Community auf Discord bei, um Unterstützung und Diskussionen zu erhalten.
 
-[![Official Discord](https://discordapp.com/api/guilds/1098796266906980422/widget.png?style=banner2)](https://discord.gg/MkH4qj2Jp9)
+[![Offizieller Discord](https://discordapp.com/api/guilds/1098796266906980422/widget.png?style=banner2)](https://discord.gg/MkH4qj2Jp9)
 
 ---
 
-Enjoy the enhanced browsing experience within `big-AGI` and explore the web without ever leaving your chat!
+Genießen Sie das verbesserte Browsing-Erlebnis in `FlowHero` und erkunden Sie das Web, ohne jemals Ihren Chat verlassen zu müssen!
 
-Last updated on Feb 27, 2024 ([edit on GitHub](https://github.com/enricoros/big-AGI/edit/main/docs/config-feature-browse.md))
+Zuletzt aktualisiert am 27. Februar 2024 ([auf GitHub bearbeiten](https://github.com/enricoros/big-AGI/edit/main/docs/config-feature-browse.md))
