@@ -19,13 +19,13 @@ import { useChatAutoAI } from '../chat/store-app-chat';
 const _keepThinkingBlocksOptions: FormSelectOption<'all' | 'last-only'>[] = [
   {
     value: 'all',
-    label: 'Alle Blöcke',
-    description: 'Alle Blöcke behalten',
+    label: 'All Messages',
+    description: 'Keep all blocks',
   },
   {
     value: 'last-only',
-    label: 'Nur letzte Nachricht',
-    description: 'Nur den letzten Block behalten',
+    label: 'Last Message Only',
+    description: 'Only keep last',
   },
 ] as const;
 
@@ -85,101 +85,101 @@ export function AppChatSettingsAI() {
 
     <FormControlDomainModel
       domainId='codeApply'
-      title={!showModelIcons ? 'Code-Modell' : <><CodeIcon color='primary' sx={{ fontSize: 'lg', mr: 0.5, mb: 0.25 }} />Code-Modell</>}
-      description='Code-Aufgaben'
+      title={!showModelIcons ? 'Coding model' : <><CodeIcon color='primary' sx={{ fontSize: 'lg', mr: 0.5, mb: 0.25 }} />Coding model</>}
+      description='Code tasks'
       tooltip={<>
-        Intelligentes <b>Code-Bearbeitungs</b>-Modell (muss Tool Calls unterstützen) mit großartigen Programmierfähigkeiten und nicht zu langsam. Verwendet für:
+        Smart <b>code editing</b> model (must support Tool Calls) with great conding skills and not too slow. Used for:
         <ul>
-          <li>Diagramm-Generierung</li>
-          <li>HTML UI-Generierung</li>
-          <li>Vorwärtskompatibilität</li>
+          <li>Diagrams generation</li>
+          <li>HTML UI generation</li>
+          <li>Forward compatibility</li>
         </ul>
-        Idealerweise ein Sonnet 3.5-Klasse Modell wählen.
+        Ideally select a Sonnet 3.5-class model.
       </>}
     />
 
     <FormControlDomainModel
       domainId='fastUtil'
-      title={!showModelIcons ? 'Utility-Modell' : <><EditRoundedIcon color='primary' sx={{ fontSize: 'lg', mr: 0.5, mb: 0.25 }} />Utility-Modell</>}
-      description='Schnelle, verschiedene Aufgaben'
+      title={!showModelIcons ? 'Utility model' : <><EditRoundedIcon color='primary' sx={{ fontSize: 'lg', mr: 0.5, mb: 0.25 }} />Utility model</>}
+      description='Fast, misc. tasks'
       tooltip={<>
-        Leichtgewichtiges Modell (muss Tool Calls unterstützen) für &quot;schnelle&quot;, kostengünstige Operationen, wie:
+        Lightweight model (must support Tool Calls) used for &quot;fast&quot;, low-cost operations, such as:
         <ul>
-          <li>Chat-Titel-Generierung</li>
-          <li>Anhang-Prompts</li>
-          <li>Zeichen-Prompts</li>
-          <li>Und mehr</li>
+          <li>Chat title generation</li>
+          <li>Attachment prompts</li>
+          <li>Drawing prompts</li>
+          <li>And more</li>
         </ul>
-        Für Chat-Nachrichten und ähnliche hochwertige Inhalte wird stattdessen das Chat-Modell verwendet.
+        For chat messages and similar high-quality content, the chat model is used instead.
       </>}
     />
 
     {labsDevMode && (
       <FormControlDomainModel
         domainId='primaryChat'
-        title={<><EngineeringIcon color='warning' sx={{ fontSize: 'lg', mr: 0.5, mb: 0.25 }} />Zuletzt verwendetes Modell</>}
-        description='Chat-Fallback-Modell'
+        title={<><EngineeringIcon color='warning' sx={{ fontSize: 'lg', mr: 0.5, mb: 0.25 }} />Last used model</>}
+        description='Chat fallback model'
         tooltip='The last used chat model, used as default for new conversations. This is a develoment setting used to test out auto-detection of the most fitting initial chat model.'
       />
     )}
 
     <FormSelectControl
-      title='Denkblöcke'
-      tooltip='Steuert, wie KI-Denk-/Begründungsblöcke in Ihrem Chat-Verlauf gespeichert werden. Das Behalten nur in der letzten Nachricht (Standard) reduziert die Unordnung.'
+      title='Reasoning blocks'
+      tooltip='Controls how AI thinking/reasoning blocks are kept in your chat history. Keeping only in the last message (default) reduces clutter.'
       options={_keepThinkingBlocksOptions}
       value={chatKeepLastThinkingOnly ? 'last-only' : 'all'}
       onChange={(value) => setChatKeepLastThinkingOnly(value === 'last-only')}
       selectSx={{ minWidth: 140 }}
     />
 
-    <ListDivider inset='gutter'>Automatische KI-Funktionen</ListDivider>
+    <ListDivider inset='gutter'>Automatic AI Functions</ListDivider>
 
     <FormControl orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
-      <FormLabelStart title='Chat Auto-Titel'
-                      description={autoTitleChat ? 'Automatisch' : 'Nur manuell'}
-                      tooltip='[Utility-Modell]  Generiert automatisch relevante Titel für neue Chat-Unterhaltungen.'
+      <FormLabelStart title='Chat Auto-Title'
+                      description={autoTitleChat ? 'Auto' : 'Manual only'}
+                      tooltip='[Utility model]  Automatically generates relevant titles for new chat conversations.'
                       tooltipWarning={!autoTitleChat} />
       <Switch checked={autoTitleChat} onChange={handleAutoSetChatTitleChange}
-              endDecorator={autoTitleChat ? 'An' : 'Aus'}
+              endDecorator={autoTitleChat ? 'On' : 'Off'}
               slotProps={{ endDecorator: { sx: { minWidth: 26 } } }} />
     </FormControl>
 
     <FormControl orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
-      <FormLabelStart title='Anhang-Prompts'
-                      description={autoSuggestAttachmentPrompts ? 'Aktionen vorschlagen' : 'Aus'}
-                      tooltip={!autoSuggestAttachmentPrompts ? undefined : '[Utility-Modell]  Schlägt Aktionen/Prompts vor, wenn Anhänge zur Unterhaltung hinzugefügt werden.'} />
+      <FormLabelStart title='Attachment Prompts'
+                      description={autoSuggestAttachmentPrompts ? 'Guess Actions' : 'Off'}
+                      tooltip={!autoSuggestAttachmentPrompts ? undefined : '[Utility model]  Suggests actions/prompts when attachments are added to the conversation.'} />
       <Switch checked={autoSuggestAttachmentPrompts} onChange={handleAutoSuggestAttachmentPromptsChange}
-              endDecorator={autoSuggestAttachmentPrompts ? 'An' : 'Aus'}
+              endDecorator={autoSuggestAttachmentPrompts ? 'On' : 'Off'}
               slotProps={{ endDecorator: { sx: { minWidth: 26 } } }} />
     </FormControl>
 
 
-    <ListDivider inset='gutter'>Nachrichten automatisch erweitern</ListDivider>
+    <ListDivider inset='gutter'>Auto-augment Messages</ListDivider>
 
     <FormControl orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
-      <FormLabelStart title='Generative Diagramme'
-                      description={autoSuggestDiagrams ? 'Diagramme hinzufügen' : 'Aus'}
-                      tooltip={!autoSuggestDiagrams ? undefined : '[Coding model]  Erstellt automatisch visuelle Diagramme und Flussdiagramme, wenn die KI erkennt, dass eine Antwort mit einer visuellen Darstellung klarer wäre.'} />
+      <FormLabelStart title='Generative Diagrams'
+                      description={autoSuggestDiagrams ? 'Add Diagrams' : 'Off'}
+                      tooltip={!autoSuggestDiagrams ? undefined : '[Coding model]  Automatically creates visual diagrams and flowcharts when the AI detects that a response would be clearer with a visual representation.'} />
       <Switch checked={autoSuggestDiagrams} onChange={handleAutoSuggestDiagramsChange}
-              endDecorator={autoSuggestDiagrams ? 'An' : 'Aus'}
+              endDecorator={autoSuggestDiagrams ? 'On' : 'Off'}
               slotProps={{ endDecorator: { sx: { minWidth: 26 } } }} />
     </FormControl>
 
     <FormControl orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
       <FormLabelStart
         title='Generative UIs'
-        description={autoSuggestHTMLUI ? 'HTML hinzufügen' : 'Aus'}
+        description={autoSuggestHTMLUI ? 'Add HTML' : 'Off'}
         tooltipWarning={autoSuggestHTMLUI}
         tooltip={<>
-          [Coding model] Erstellt interaktive UI-Komponenten in Chat-Antworten, wenn angemessen.
+          [Coding model] Creates interactive UI components within chat responses when appropriate.
           <hr />
-          SICHERHEITSWARNUNG: DIES SCHALTET DIE JS/HTML-CODE-AUSFÜHRUNG INNERHALB VON CHAT-NACHRICHTEN EIN
+          SECURITY WARNING: THIS TURNS ON JS/HTML CODE EXECUTION WITHIN CHAT MESSAGES
           <hr />
-          ALPHA-QUALITÄT NUR ZUM TESTEN. Verwendung auf eigenes Risiko.
+          ALPHA QUALITY FOR TESTING ONLY. Use at your own risk.
         </>}
       />
       <Switch checked={autoSuggestHTMLUI} onChange={handleAutoSuggestHTMLUIChange}
-              endDecorator={autoSuggestHTMLUI ? <div>An{' '}<WarningRoundedIcon sx={{ cursor: 'pointer', color: 'red' }} /></div> : 'Aus'}
+              endDecorator={autoSuggestHTMLUI ? <div>On{' '}<WarningRoundedIcon sx={{ cursor: 'pointer', color: 'red' }} /></div> : 'Off'}
               slotProps={{ endDecorator: { sx: { minWidth: 26 } } }} />
     </FormControl>
 

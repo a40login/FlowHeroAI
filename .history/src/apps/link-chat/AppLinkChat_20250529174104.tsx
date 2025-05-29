@@ -13,14 +13,13 @@ import { DataAtRestV1 } from '~/common/stores/chat/chats.converters';
 import { GoodModal } from '~/common/components/modals/GoodModal';
 import { InlineError } from '~/common/components/InlineError';
 import { LogoProgress } from '~/common/components/LogoProgress';
-import { OptimaDrawerIn } from '~/common/layout/optima/portals/OptimaPortalsIn';
+import { OptimaDrawerIn, OptimaPanelIn } from '~/common/layout/optima/portals/OptimaPortalsIn';
 import { addSnackbar } from '~/common/components/snackbar/useSnackbarsStore';
 import { apiAsyncNode } from '~/common/util/trpc.client';
 import { capitalizeFirstLetter } from '~/common/util/textUtils';
 import { conversationTitle } from '~/common/stores/chat/chat.conversation';
 import { navigateToChatLinkList } from '~/common/app.routes';
 import { themeBgAppDarker } from '~/common/app.theme';
-// import { useSetOptimaAppMenu } from '~/common/layout/optima/useOptima';
 
 import { LinkChatAppMenuItems } from './LinkChatAppMenuItems';
 import { LinkChatDrawer } from './LinkChatDrawer';
@@ -28,7 +27,6 @@ import { LinkChatViewer } from './LinkChatViewer';
 
 
 const SPECIAL_LIST_PAGE_ID = 'list';
-
 
 
 const Centerer = (props: { backgroundColor: string, children?: React.ReactNode }) =>
@@ -45,12 +43,12 @@ const ListPlaceholder = (props: { hasLinks: boolean }) =>
     <Card>
       <CardContent>
         <Typography level='title-md'>
-          Geteilte Konversationen
+          Shared Conversations
         </Typography>
         <Typography level='body-sm'>
           {props.hasLinks
-            ? 'Hier sehen Sie zuvor exportierte geteilte Konversationen. Bitte wählen Sie eine Konversation aus dem Drawer.'
-            : 'Keine geteilten Konversationen gefunden. Bitte exportieren Sie zuerst eine Konversation aus diesem Browser.'}
+            ? 'Here you can see formely exported shared conversations. Please select a conversation from the drawer.'
+            : 'No shared conversations found. Please export a conversation from this browser first.'}
         </Typography>
       </CardContent>
     </Card>
@@ -61,7 +59,7 @@ const ShowLoading = () =>
   <Centerer backgroundColor={themeBgAppDarker}>
     <LogoProgress showProgress={true} />
     <Typography level='title-sm' sx={{ mt: 2 }}>
-      Chat wird geladen...
+      Loading Chat...
     </Typography>
   </Centerer>;
 
@@ -200,6 +198,13 @@ export function AppLinkChat(props: { chatLinkId: string | null }) {
       />
     </OptimaDrawerIn>
 
+    {/* -> Panel */}
+    <OptimaPanelIn>
+      <LinkChatAppMenuItems
+        activeLinkId={linkId}
+        onDeleteLink={handleConfirmDeletion}
+      />
+    </OptimaPanelIn>
 
 
     {isListPage
@@ -217,22 +222,22 @@ export function AppLinkChat(props: { chatLinkId: string | null }) {
     {!!deleteConfirmId && (deleteConfirmKey === null) && (
       <ConfirmationModal
         onClose={handleCancelDeletion} onPositive={handleConfirmDeletionKey}
-        confirmationText='Sind Sie sicher, dass Sie diesen Link löschen möchten?'
-        positiveActionText={'Ja, löschen'}
+        confirmationText='Are you sure you want to delete this link?'
+        positiveActionText={'Yes, Delete'}
       />
     )}
 
     {/* Deletion Key Input */}
     {!!deleteConfirmId && (deleteConfirmKey !== null) && (
       <GoodModal
-        open title='Löschschlüssel eingeben'
+        open title='Enter Deletion Key'
         titleStartDecorator={<WarningRoundedIcon sx={{ color: 'danger.solidBg' }} />}
         onClose={handleCancelDeletionKey}
         hideBottomClose
       >
         <Divider />
         <Typography level='body-md'>
-          Sie müssen den ursprünglichen Löschschlüssel eingeben, um diese Konversation zu löschen.
+          You need to enter the original deletion key to delete this conversation.
         </Typography>
         <Input
           value={deleteConfirmKey}
@@ -241,7 +246,7 @@ export function AppLinkChat(props: { chatLinkId: string | null }) {
         />
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', mt: 2 }}>
           <Button autoFocus variant='plain' color='neutral' onClick={handleCancelDeletionKey}>
-            Abbrechen
+            Cancel
           </Button>
           <Button
             variant='solid' color='danger'
@@ -249,7 +254,7 @@ export function AppLinkChat(props: { chatLinkId: string | null }) {
             onClick={handleDeletionKeyConfirmed}
             sx={{ lineHeight: '1.5em' }}
           >
-            Löschen
+            Delete
           </Button>
         </Box>
       </GoodModal>
