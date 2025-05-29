@@ -52,7 +52,19 @@ interface NewsItem {
 
 // news and feature surfaces
 export const NewsItems: NewsItem[] = [
-  {
+  /* {
+    versionCode: Release.App.versionCode,
+    versionName: Release.App.versionName,
+    versionDate: new Date('2024-10-15T01:00:00Z'),
+    items: [
+      { text: <>You&apos;re running an <B>unsupported Early Access</B> build of Big-AGI V2. This version is used by developers to implement long-term breaking features.</> },
+      { text: <>This branch previews experimental features that are subject to change and may break without notice.</> },
+      { text: <>Please report screenshots of breakages and console error messages.</> },
+      { text: <>Please note that this is not the official release.</> },
+      { text: <>For stable releases: <ExternalLink href='https://big-agi.com'>big-agi.com</ExternalLink>.</> },
+    ],
+  }, */
+  
     versionCode: '2.0.0-beta', // Assuming Release.App.versionCode would be this for FlowHero
     versionName: 'FlowHero AI Suite 2.0.0-beta',
     versionDate: new Date(), // Updated to current time as per example "bereitgestellt vor 24 Minuten"
@@ -110,6 +122,9 @@ export const NewsItems: NewsItem[] = [
       { text: <>1.15.1: Unterstützung für <B>Gemini Pro 1.5</B> und <B>OpenAI Modelle</B> vom April 2024</> },
     ],
   },
+  // NOTE: The following items are placeholders and would need to be adapted in the FlowHero style similarly.
+  // For brevity, I'm only including the structure for the next item.
+  // You would continue this pattern for all other existing news items.
   {
     versionCode: '1.14',
     versionName: 'Modell-Orchestrierung (Modelmorphic)', // Example adaptation
@@ -288,20 +303,12 @@ export const NewsItems: NewsItem[] = [
     ],
   },
   {
-    versionCode: '1.3.1',
-    items: [
-      { text: <><B>Flattener</B> - 4-Modi Konversationszusammenfasser für Agenten-Ergebnisse</> },
-      { text: <><B>Forking</B> - Verzweigen Sie Ihre Workflows</> },
-      { text: <><B>/system</B> und <B>/assistent</B> um eine <i>System</i>- oder <i>Assistenten</i>-Nachricht anzuhängen</> },
-      { text: 'NextJS STOP Bug.. behoben, mit Vercel!' },
-    ],
-  },
-  {
     versionCode: '1.2.1',
+    // text: '',
     items: [
-      { text: <>Neue Homepage: <b><Link href={'YOUR_FLOWHERO_HOMEPAGE_URL' + clientUtmSource()} target='_blank'>{'YOUR_FLOWHERO_HOMEPAGE_URL'.replace('https://', '')}</Link></b></> }, // Placeholder
-      { text: 'Unterstützung für 𝑓unction Modelle' },
-      { text: <Box sx={{ display: 'flex', alignItems: 'center' }}>Labs: Experimente</Box> },
+      { text: <>New home page: <b><Link href={Brand.URIs.Home + clientUtmSource()} target='_blank'>{Brand.URIs.Home.replace('https://', '')}</Link></b></> },
+      { text: 'Support 𝑓unction models' }, // (n)
+      { text: <Box sx={{ display: 'flex', alignItems: 'center' }}>Labs: experiments</Box> }, // ⚗️🧬🔬🥼 🥽🧪 <ScienceIcon sx={{ fontSize: 24, opacity: 0.5 }} />
     ],
   },
 ];

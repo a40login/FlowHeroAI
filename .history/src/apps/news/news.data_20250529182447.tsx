@@ -1,3 +1,4 @@
+<![CDATA[
 import * as React from 'react';
 import { StaticImageData } from 'next/image';
 
@@ -335,3 +336,4 @@ function B(props: {
     </ExternalLink>
   );
 }
+]]>
