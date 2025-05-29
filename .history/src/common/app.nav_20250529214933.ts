@@ -239,13 +239,13 @@ export const navItems: {
     //   type: 'extLink',
     //   name: 'X',
     //   icon: TwitterIcon,
-    //   href: 'https://www.flow-hero.de/twitter',
+    //   href: 'https://twitter.com',
     // },
     {
       type: 'extLink',
       name: 'Discord',
  icon: DiscordIcon,
- href: 'https://www.flow-hero.de/discord', // TODO: update to FlowHero discord
+ href: 'https://discord.gg/MkH4g2Gz', // TODO: update to FlowHero discord
     },
     {
       type: 'extLink',

@@ -41,8 +41,8 @@ export function BrowseSettings() {
   return <>
 
     <Typography level='body-sm'>
-      Ermöglicht das Herunterladen von Webseiten. <ExternalLink href='https://flow-hero.de/docs/config-feature-browse'>Mehr erfahren</ExternalLink>.<br />
-      <b>Websuche</b> wird separat konfiguriert und erfordert einen Google API-Schlüssel.
+      Enables downloading of web pages. <ExternalLink href='https://big-agi.com/docs/config-feature-browse'>Learn more</ExternalLink>.<br />
+      <b>Web Search</b> is configured separately and requires a Google API key.
       {/*Web Browser lets the AI visit and analyze web pages in real-time. <ExternalLink href='https://big-agi.com/docs/config-feature-browse'>Learn more about setup</ExternalLink>.*/}
     </Typography>
 
@@ -56,33 +56,38 @@ export function BrowseSettings() {
 
 
     <FormControl orientation='horizontal' sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-      <FormLabelStart title='Seiten-Transformation' description='Inhalt bereinigen' />
+      <FormLabelStart title='Web page to LLM' description={pageTransform === 'text' ? 'Converts to text' : pageTransform === 'markdown' ? 'Converts to markdown' : 'Preserves HTML (heavy)'} />
       <Select
         variant='outlined'
-        value={pageTransform}
-        onChange={handlePageTransformChange}
-        sx={{ minWidth: 120 }}
+        value={pageTransform} onChange={handlePageTransformChange}
+        slotProps={{
+          root: { sx: { minWidth: '140px' } },
+          indicator: { sx: { opacity: 0.5 } },
+          button: { sx: { whiteSpace: 'inherit' } },
+        }}
       >
-        <Option value='none'>Keine</Option>
-        <Option value='clean'>Bereinigen</Option>
+        <Option value='text'>Text (default)</Option>
         <Option value='markdown'>Markdown</Option>
+        <Option value='html'>HTML</Option>
       </Select>
     </FormControl>
 
 
+    <FormLabel>Enable page loading for:</FormLabel>
+
     <FormControl disabled={!mayWork}>
-      <Checkbox size='sm' label='Im Composer anhängen' checked={inComposer} onChange={(event) => setEnableComposerAttach(event.target.checked)} />
-      <FormHelperText sx={_styleHelperText}>{platformAwareKeystrokes('Laden und anhängen beim Einfügen einer URL')}</FormHelperText>
+      <Checkbox size='sm' label='Attachments' checked={inComposer} onChange={(event) => setEnableComposerAttach(event.target.checked)} />
+      <FormHelperText sx={_styleHelperText}>{platformAwareKeystrokes('Load and attach when pasting a URL')}</FormHelperText>
     </FormControl>
 
     <FormControl disabled={!mayWork}>
       <Checkbox size='sm' label='ReAct' checked={inReact} onChange={(event) => setEnableReactTool(event.target.checked)} />
-      <FormHelperText sx={_styleHelperText}>Aktiviert loadURL() in ReAct</FormHelperText>
+      <FormHelperText sx={_styleHelperText}>Enables loadURL() in ReAct</FormHelperText>
     </FormControl>
 
     <FormControl disabled>
-      <Checkbox size='sm' label='Personas Browsing-Tool' checked={false} onChange={(event) => setEnablePersonaTool(event.target.checked)} />
-      <FormHelperText sx={_styleHelperText}>Demnächst verfügbar</FormHelperText>
+      <Checkbox size='sm' label='Personas browsing tool' checked={false} onChange={(event) => setEnablePersonaTool(event.target.checked)} />
+      <FormHelperText sx={_styleHelperText}>Coming soon</FormHelperText>
       {/*<FormHelperText sx={_styleHelperText}>Enable loading URLs by Personas</FormHelperText>*/}
     </FormControl>
 
